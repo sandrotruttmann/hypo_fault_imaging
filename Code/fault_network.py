@@ -386,8 +386,6 @@ def faultplanes3D(ID, date, X, Y, Z, EX, EY, EZ, r_nn, dt_nn):
         NN_idx_i = NN_idx_list[i]
         neigh_i = data[NN_idx_i]
         
-        print(date[i])
-
         # Get the date of event i (master)
         date_i = np.datetime64(date[i])
 

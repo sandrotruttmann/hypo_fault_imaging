@@ -77,16 +77,6 @@ S3_mag = -1
 PP = 0
 fric_coeff = 0.75
 
-###############################################################################
-###############################################################################
-
-
-# # Launch GUI
-# (hypo_file, hypo_sep, out_dir,
-#  n_mc, r_nn, dt_nn, validation_bool,
-#  foc_file, foc_sep, stress_bool, S1_mag, S2_mag, S3_mag,
-#  PP, S1_trend, S1_plunge, S3_trend, S3_plunge, stress_R,
-#  TS_norm_bool, fric_coeff, autoclass_bool) = utilities.launch_GUI()
 
 ###############################################################################
 # Start the timer
