@@ -1,35 +1,3 @@
-
-# Bern, 27/12/2022
-
-# Relocated earthquake catalog of the St. Léonard earthquake sequence of Truttmann et al. (XXXX):
-# Hypocenter-based 3D Imaging of Active Faults: Method and Applications in the Southwestern Swiss Alps
-#
-# If you use this catalog please cite: Truttmann, S., Diehl, T., Herwegh, M. (XXXX). XXXX
-
-
-####################### Header description of relevant parameters: ######################
-# ID					: Event ID
-# LAT, LON				: Latitude, Longitude (decimal degrees)
-# DEPTH					: depth (in km)
-# X, Y, Z				: Coordinates relative to cluster centroid (in m)
-# EX, EY, EZ				: Errors in x, y, and z directions (3σ) (in m)
-# YR, MO, DY				: Origin date (year, month, day)
-# HR, MI, SC				: Origin time (hour, minute, second)
-# MAG					: Magnitude (ML)
-# NCCP, NCCS				: Number of cross-correlated P- and S-wave data
-# NCTP, NCTS				: Number of catalog P- and S-wave data
-# RCC, RCT				: Rms residual for cross-correlated catalog data
-# CID					: Cluster index
-# maxhor-m				: semi-major horizontal error ellipsoid axis
-# minhor-m				: semi-minor horizontal error ellipsoid axis
-# maxazi				: azimuth of semi-major horizontal error ellipsoid axis
-
-#########################################################################################
-#########################################################################################
-
-
-
-
 ID	LAT	LON	DEPTH	X	Y	Z	EX	EY	EZ	YR	MO	DY	HR	MI	SC	MAG	NCCP	NCCS	NCTP	NCTS	RCC	RCT	CID	maxhor-m	minhor-m	maxazi
 201401031	46.263871	7.397911	7.079	252.2	1.4	372.1	2.2	3.2	19.7	2014	1	10	4	46	48.01	1.6	1345	1705	410	272	0.004	0.029	1	7.5	2.2	31.6
 201401066	46.263904	7.39826	7.085	279.2	5	378.3	2.2	3.2	20.2	2014	1	19	5	24	27.05	0.9	1055	1506	227	175	0.003	0.026	1	7.5	2.4	32.4

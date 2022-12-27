@@ -35,11 +35,11 @@ import fault_network, model_validation, stress_analysis, auto_class, utilities, 
 ###     Hypocenter input file
 # hypo_file needs the following columns (similar to hypoDD .reloc-file)
 # ID, LAT, LON, DEPTH, X, Y, Z, EX, EY, EZ, YR, MO, DY, HR, MI, SC, MAG, NCCP, NCCS, NCTP, NCTS, RCC, RCT, CID
-hypo_file = 'C:/Users/Truttmann/Dropbox/PhD/Data/Data_SED/Seq_StLeonard/data/hypoDD/hypoDD_CT+CC_LSQR_Resampling.reloc.csv'        # File location
-hypo_sep = ';'                                                                                                                     # Separator
+hypo_file = '/Users/sandro/projects/Hypocenter-based-3D-imaging-of-active-faults/Example_files/StLeonard/hypoDD_StLeonard.txt'        # File location
+hypo_sep = '\t'                                                                                                                     # Separator
 
 ###     Output directory
-out_dir = 'C:/Users/Truttmann/Dropbox/PhD/Publications/Paper1_3DFaultNetworks/Submission_2/PythonCode_Output/'
+out_dir = '/Users/sandro/projects'
 
 ###     "Fault network reconstruction" module settings
 n_mc = 10                     # Nr of Monte Carlo (MC) simulations
@@ -52,7 +52,7 @@ mag_type = 'ML'                 # Magnitude type: 'ML' or 'Mw'
 # Yr, Mo, Dy, Hr:Mi, Lat, Lon, Z, Mag, A, Strike1, Dip1, Rake1, Strike2, Dip2,
 # Rake2, Pazim, Pdip, Tazim, Tdip, Q, Type, Loc
 validation_bool = True
-foc_file = 'C:/Users/Truttmann/Dropbox/PhD/Publications/Paper1_3DFaultNetworks/Data/FocalMechanisms_StLeonard.csv'
+foc_file = '/Users/sandro/projects/Hypocenter-based-3D-imaging-of-active-faults/Example_files/StLeonard/FocalMechanisms_StLeonard.csv'
 foc_sep = ';'
 foc_mag_check = True
 foc_loc_check = True

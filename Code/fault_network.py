@@ -385,6 +385,8 @@ def faultplanes3D(ID, date, X, Y, Z, EX, EY, EZ, r_nn, dt_nn):
         # the
         NN_idx_i = NN_idx_list[i]
         neigh_i = data[NN_idx_i]
+        
+        print(date[i])
 
         # Get the date of event i (master)
         date_i = np.datetime64(date[i])
@@ -641,7 +643,7 @@ def faultnetwork3D(hypo_file, hypo_sep, out_dir, n_mc, r_nn, dt_nn, validation_b
     # Calculate the fault plane orientations for all perturbated hypocenter
     # locations k
     ID = np.array(data_input['ID'])
-    date = np.array(data_input['Date'].dt.strftime('%Y-%m-%d %h:%mi%s'))
+    date = np.array(data_input['Date'].dt.strftime('%Y-%m-%d %H:%H:%S'))
     EX = np.array(data_input['EX'])
     EY = np.array(data_input['EY'])
     EZ = np.array(data_input['EZ'])
