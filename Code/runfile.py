@@ -22,6 +22,7 @@ globals().clear()
 import datetime
 import time
 import numpy as np
+import os
 
 # Import modules of the provided toolbox
 import fault_network, model_validation, stress_analysis, auto_class, utilities, visualisation
@@ -41,7 +42,7 @@ hypo_sep = ';'                                                                  
 out_dir = 'C:/Users/Truttmann/Dropbox/PhD/Publications/Paper1_3DFaultNetworks/Submission_2/PythonCode_Output/'
 
 ###     "Fault network reconstruction" module settings
-n_mc = 1000                     # Nr of Monte Carlo (MC) simulations
+n_mc = 10                     # Nr of Monte Carlo (MC) simulations
 r_nn = 100                      # Search radius [m] of nearest neighbor search
 dt_nn = 26298                   # Search time window [h]
 mag_type = 'ML'                 # Magnitude type: 'ML' or 'Mw'
