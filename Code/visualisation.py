@@ -22,6 +22,8 @@ import mplstereonet
 import utilities
 import utilities_plot
 import matplotlib.pyplot as plt
+import os
+
 
 
 def model_3d(input_params, data_input, data_output):
@@ -527,7 +529,14 @@ def model_3d(input_params, data_input, data_output):
     
     fig.update_xaxes(title_standoff=20)
     
-    fig.write_html(input_params['out_dir'][0] + '/3D_model.html')
+    # Save output
+    out_path = os.path.join(input_params['out_dir'][0], 'Model_output')
+    if not os.path.exists(out_path):
+        os.makedirs(out_path)
+    else:
+        pass
+
+    fig.write_html(out_path + '/3D_model.html')
 
     return
 
@@ -562,7 +571,15 @@ def faults_stereoplot(input_params, data_output):
     ax.set_azimuth_ticks(angles=[0, 180], labels=['North', 'South'])
     fig.set_figheight(6.8)
     fig.set_figwidth(6)
-    fig.savefig(input_params['out_dir'][0] + '/Stereoplot.pdf')
+    
+    # Save figure
+    out_path = os.path.join(input_params['out_dir'][0], 'Model_output')
+    if not os.path.exists(out_path):
+        os.makedirs(out_path)
+    else:
+        pass
+
+    fig.savefig(out_path + '/Stereoplot.pdf')
     plt.close(fig)
     
 
@@ -581,13 +598,23 @@ def nmc_histogram(input_params, data_input, per_X, per_Y, per_Z):
     -------
     None.
 
-    """    
-    mm = 1/25.4
+    """   
     
-    import os
-    newpath = input_params['out_dir'][0] + '/ErrorDistributions'
+    print('Plotting MC dataset histograms')
+ 
+    mm = 1/25.4
+    # Create output path (if not existing yet)
+    out_path = os.path.join(input_params['out_dir'][0], 'Model_output')
+    if not os.path.exists(out_path):
+        os.makedirs(out_path)
+    else:
+        pass
+
+    newpath = out_path + '/ErrorDistributions'
     if not os.path.exists(newpath):
         os.makedirs(newpath)
+    else:
+        pass
     
     for i in range(len(data_input)):
         plt.rcParams.update({'font.size': 8})
@@ -643,7 +670,8 @@ def nmc_histogram(input_params, data_input, per_X, per_Y, per_Z):
         axs[2].set_xlim(Z_mean - max_range, Z_mean + max_range)
                 
         ID = data_input.loc[i, 'ID']
-        fig.savefig(input_params['out_dir'][0] + f'/ErrorDistributions/ErrorDist_{ID}.pdf')
+                
+        fig.savefig(newpath + f'/ErrorDist_{ID}.pdf')
         plt.close(fig)
 
 

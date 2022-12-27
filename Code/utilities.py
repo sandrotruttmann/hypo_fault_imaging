@@ -16,6 +16,7 @@ Please cite: Truttmann et al. (2023). Hypocenter-based 3D Imaging of Active Faul
 import numpy as np
 import numba
 import pandas as pd
+import os
 
 
 def store_inputparams(hypo_file, hypo_sep, out_dir, n_mc, r_nn, dt_nn, validation_bool, 
@@ -296,18 +297,26 @@ def save_data(input_params, data_input, data_output, per_X, per_Y, per_Z):
     None.
 
     """
+    
+    # Create output folder
+    out_path = os.path.join(input_params['out_dir'][0], 'Model_output')
+    if not os.path.exists(out_path):
+        os.makedirs(out_path)
+    else:
+        pass
+        
     # Save the input parameters to a .txt-file
-    input_params.to_csv(input_params['out_dir'][0] + '/input_params.txt', sep='\t', index=None)
+    input_params.to_csv(out_path + '/input_params.txt', sep='\t', index=None)
 
     # Save the input data to a .txt-file
-    data_input.to_csv(input_params['out_dir'][0] + '/data_input.txt', sep='\t')
+    data_input.to_csv(out_path + '/data_input.txt', sep='\t')
 
     # Save the output data to a .txt-file
-    data_output.to_csv(input_params['out_dir'][0] + '/data_output.txt', sep='\t')
+    data_output.to_csv(out_path + '/data_output.txt', sep='\t')
 
     # Save the perturbed hypocenters to a .txt-file
-    per_X.to_csv(input_params['out_dir'][0] + '/per_X.txt', sep='\t')
-    per_Y.to_csv(input_params['out_dir'][0] + '/per_Y.txt', sep='\t')
-    per_Z.to_csv(input_params['out_dir'][0] + '/per_Z.txt', sep='\t')
+    per_X.to_csv(out_path + '/per_X.txt', sep='\t')
+    per_Y.to_csv(out_path + '/per_Y.txt', sep='\t')
+    per_Z.to_csv(out_path + '/per_Z.txt', sep='\t')
 
     return

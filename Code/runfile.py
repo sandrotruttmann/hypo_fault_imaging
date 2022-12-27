@@ -39,7 +39,7 @@ hypo_file = '/Users/sandro/projects/Hypocenter-based-3D-imaging-of-active-faults
 hypo_sep = '\t'                                                                                                                     # Separator
 
 ###     Output directory
-out_dir = '/Users/sandro/projects'
+out_dir = '/Users/sandro/projects/Hypocenter-based-3D-imaging-of-active-faults'
 
 ###     "Fault network reconstruction" module settings
 n_mc = 10                     # Nr of Monte Carlo (MC) simulations
@@ -125,7 +125,7 @@ data_output, S2_trend, S2_plunge = stress_analysis.fault_stress(input_params,
 # Visualisation
 visualisation.model_3d(input_params, data_input, data_output)
 visualisation.faults_stereoplot(input_params, data_output)
-# visualisation.nmc_histogram(input_params, data_input, per_X, per_Y, per_Z)
+visualisation.nmc_histogram(input_params, data_input, per_X, per_Y, per_Z)
 
 ###############################################################################
 # Save model output data
