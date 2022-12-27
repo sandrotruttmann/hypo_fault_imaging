@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 """
@@ -7,6 +7,12 @@ This script provides an example of how to combine the different modules to perfo
 Each of the modules can be turned on and off by specifing the respective boolean argument (true/false)
 
 Please cite: Truttmann et al. (2023). Hypocenter-based 3D Imaging of Active Faults: Method and Applications in the Southwestern Swiss Alps.
+
+@author: Sandro Truttmann
+@contact: sandro.truttmann@geo.unibe.ch
+@license: MIT
+@date: December 2022
+@version: 0.1
 """
 
 # Clear variables

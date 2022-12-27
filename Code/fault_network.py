@@ -1,14 +1,16 @@
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Fri Dec 17 08:52:34 2021
+HYPOCENTER-BASED 3D IMAGING OF ACTIVE FAULTS: Fault Network Reconstruction Module
 
-@author: Truttmann
+Please cite: Truttmann et al. (2023). Hypocenter-based 3D Imaging of Active Faults: Method and Applications in the Southwestern Swiss Alps.
+
+@author: Sandro Truttmann
+@contact: sandro.truttmann@geo.unibe.ch
+@license: MIT
+@date: December 2022
+@version: 0.1
 """
-
-
-###############################################################################
-### Fault network reconstruction functions
-###############################################################################
 
 # Import modules
 import numpy as np

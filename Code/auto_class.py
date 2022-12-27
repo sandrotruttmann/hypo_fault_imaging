@@ -1,17 +1,16 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
+HYPOCENTER-BASED 3D IMAGING OF ACTIVE FAULTS: Auto Classification Module
+
+Please cite: Truttmann et al. (2023). Hypocenter-based 3D Imaging of Active Faults: Method and Applications in the Southwestern Swiss Alps.
 
 @author: Sandro Truttmann
-@contact:
-@license
-@date:
-@version:
+@contact: sandro.truttmann@geo.unibe.ch
+@license: MIT
+@date: December 2022
+@version: 0.1
 """
-
-###############################################################################
-### Auto classification functions
-###############################################################################
 
 # Import modules
 import numpy as np

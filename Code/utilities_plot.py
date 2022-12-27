@@ -1,11 +1,17 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 """
- =============================================================================
-# Collection of Functions for Plotting
-#
-# Author: Sandro Truttmann (sandro.truttmann@geo.unibe.ch)
-# Bern, March 2021
-# =============================================================================
+HYPOCENTER-BASED 3D IMAGING OF ACTIVE FAULTS: Utilities for Plotting
+
+Please cite: Truttmann et al. (2023). Hypocenter-based 3D Imaging of Active Faults: Method and Applications in the Southwestern Swiss Alps.
+
+@author: Sandro Truttmann
+@contact: sandro.truttmann@geo.unibe.ch
+@license: MIT
+@date: December 2022
+@version: 0.1
 """
+
 import numpy as np
 import matplotlib
 import utilities
