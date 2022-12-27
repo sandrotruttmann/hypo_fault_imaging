@@ -52,7 +52,7 @@ mag_type = 'ML'                 # Magnitude type: 'ML' or 'Mw'
 # Yr, Mo, Dy, Hr:Mi, Lat, Lon, Z, Mag, A, Strike1, Dip1, Rake1, Strike2, Dip2,
 # Rake2, Pazim, Pdip, Tazim, Tdip, Q, Type, Loc
 validation_bool = True
-foc_file = '/Users/sandro/projects/Hypocenter-based-3D-imaging-of-active-faults/Example_files/StLeonard/FocalMechanisms_StLeonard.csv'
+foc_file = '/Users/sandro/projects/Hypocenter-based-3D-imaging-of-active-faults/Example_files/StLeonard/FocalMechanisms_StLeonard.txt'
 foc_sep = ';'
 foc_mag_check = True
 foc_loc_check = True
