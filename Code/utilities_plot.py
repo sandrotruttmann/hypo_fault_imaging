@@ -7,9 +7,9 @@ Please cite: Truttmann et al. (2023). Hypocenter-based 3D Imaging of Active Faul
 
 @author: Sandro Truttmann
 @contact: sandro.truttmann@geo.unibe.ch
-@license: MIT
+@license: GPL-3.0
 @date: December 2022
-@version: 0.1
+@version: 1.0
 """
 
 import numpy as np

@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-
 """
 HYPOCENTER-BASED 3D IMAGING OF ACTIVE FAULTS
 This script provides an example of how to combine the different modules to perform 'hypocenter-based 3D imaging of active faults'.
@@ -10,9 +9,9 @@ Please cite: Truttmann et al. (2023). Hypocenter-based 3D Imaging of Active Faul
 
 @author: Sandro Truttmann
 @contact: sandro.truttmann@geo.unibe.ch
-@license: MIT
+@license: GPL-3.0
 @date: December 2022
-@version: 0.1
+@version: 1.0
 """
 
 # Clear variables
