@@ -41,7 +41,7 @@ hypo_sep = '\t'                                                                 
 out_dir = '/Users/sandro/projects/Hypocenter-based-3D-imaging-of-active-faults'
 
 ###     "Fault network reconstruction" module settings
-n_mc = 10                     # Nr of Monte Carlo (MC) simulations
+n_mc = 1000                     # Nr of Monte Carlo (MC) simulations
 r_nn = 100                      # Search radius [m] of nearest neighbor search
 dt_nn = 26298                   # Search time window [h]
 mag_type = 'ML'                 # Magnitude type: 'ML' or 'Mw'
