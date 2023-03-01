@@ -19,6 +19,7 @@ The following dependencies need to be installed by the user (we recommend using 
 - FB8 (https://github.com/tianluyuan/sphere)
 - mplstereonet (https://github.com/joferkington/mplstereonet)
 - spherecluster (https://github.com/jasonlaska/spherecluster)
-    - Important: replace the files "spherical_kmeans.py" and "von_mises_fisher_mixture.py" with the updated versions thereof, provided in the folder Misc in this repository
+    - IMPORTANT: replace the files "spherical_kmeans.py" and "von_mises_fisher_mixture.py" with the updated versions thereof, provided in the folder Misc in this repository
+- mycolorpy (https://github.com/binodbhttr/mycolorpy) (only needed for the sensitivity analysis script "parameter_sensitivity.py")
 
 The currently supported version of Python is 3.8
