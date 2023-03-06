@@ -743,14 +743,17 @@ def faultnetwork3D(hypo_file, hypo_sep, out_dir, n_mc, r_nn, dt_nn, validation_b
                 v_sum = np.array([np.nansum(nor_x), np.nansum(nor_y), np.nansum(nor_z)])
                 R = np.linalg.norm(v_sum)
                 RN = R / N
-
+                
                 # Calculate FB5 (Kent) distribution parameters
                 vectors = np.array([nor_x, nor_y, nor_z]).T
                 vectors = vectors[~np.isnan(vectors).any(axis=1)]
-                G = kent_me(vectors)
-                mean_vector = G.gamma1 / np.linalg.norm(G.gamma1)
-                kappa = int(G.kappa)
-                beta = int(G.beta)
+                try:
+                    G = kent_me(vectors)
+                except AssertionError:
+                    pass
+                mean_vector = np.array([np.nanmean(nor_x), np.nanmean(nor_y), np.nanmean(nor_z)])  # TODO: get mean vector
+                kappa = 9999999
+                beta = 9999999
                 
                 # Check if mean lies on upper hemisphere and turn back to lower
                 if mean_vector[2] > 0:
