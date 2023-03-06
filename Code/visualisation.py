@@ -291,10 +291,14 @@ def model_3d(input_params, data_input, data_output):
 
     # Workaround to only show one legend entry for fault planes: create an array
     # with only the first value True with the length of the number of events
-    idx = df['mean_azi'].dropna()
-    idx = idx.index[0]
     legend_show = [False for i in range(len(df))]
-    legend_show[idx] = True
+    idx = df['mean_azi'].dropna()
+    try:
+        idx = idx.index[0]   
+        legend_show[idx] = True
+    except IndexError:
+        print("indexerror")
+        pass
     
     for i in range(len(df)):
         # Get XYZ coordinates of the points of the circular fault plane around the
