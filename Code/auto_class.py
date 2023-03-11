@@ -117,7 +117,7 @@ def auto_classification(input_params, data_output, n_clusters,
         data_output['index_temp'] = data_output.index
         data_output = pd.merge(data_output, df_labels, on='index_temp', how='outer')
         data_output = data_output.drop(columns=['index_temp'])
-        
+
         # Print mean directions of each class
         for q in range(len(cluster_centers)):
             nor_x = cluster_centers[q][0]
@@ -133,6 +133,42 @@ def auto_classification(input_params, data_output, n_clusters,
                 pass
             
             azi, dip = utilities.plane_normal_to_azidip(nor_x, nor_y, nor_z)
+            
+            # ## Estimate the confidence angle a95
+            # # Extract all planes from class q
+            # df_q = data_output.loc[data_output['class'] == q]
+            # df_q = df_q.reset_index(drop=True)
+            # nor_x_list = np.array(df_q['nor_x_mean'])
+            # nor_y_list = np.array(df_q['nor_y_mean'])
+            # nor_z_list = np.array(df_q['nor_z_mean'])
+            # # Calculate the direction of the pole to the first plane
+            # nor_x_1 = nor_x[np.isfinite(nor_x)][0]
+            # nor_y_1 = nor_y[np.isfinite(nor_y)][0]
+            # nor_z_1 = nor_z[np.isfinite(nor_z)][0]
+            # v1 = [nor_x_1, nor_y_1, nor_z_1]
+            # v1 = v1 / np.linalg.norm(v1)
+            # # Check every point in the dataset and swap direction if it
+            # # lies on the other side of the stereoplot
+            # # (angular difference larger than 90 degrees)
+            # for j in range(len(nor_x_list)):
+            #     vj = [nor_x_list[j], nor_y_list[j], nor_z_list[j]]
+            #     vj = vj / np.linalg.norm(vj)
+            #     if np.linalg.norm(v1 - vj) == 0:
+            #         angle_deg = np.nan
+            #     else:
+            #         angle_deg = np.degrees(np.arccos(np.dot(v1, vj)))
+            #     if angle_deg > 90:
+            #         nor_x_list[j] = nor_x_list[j] * -1
+            #         nor_y_list[j] = nor_y_list[j] * -1
+            #         nor_z_list[j] = nor_z_list[j] * -1
+            #     else:
+            #         pass
+            # # Calculate R, N and confidence angle (Borradaile 2003)
+            # N = len(df_q)
+            # v_sum = np.array([np.nansum(nor_x_list), np.nansum(nor_y_list), np.nansum(nor_z_list)])
+            # R = np.linalg.norm(v_sum)
+            # p = 0.05            # confidence = 1-p
+            # a95 = np.arccos(1-((N-R)/R)*((1/p)**(1/(N-1)-1)))
             
             print(f'Mean fault orientation class {q}: ', azi, '/', dip)
 
