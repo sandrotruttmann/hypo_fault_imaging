@@ -12,7 +12,8 @@ from scipy.special import logsumexp
 
 
 from sklearn.cluster import KMeans
-from sklearn.cluster._kmeans import _tolerance, _kmeans_plusplus
+from sklearn.cluster._kmeans import _tolerance
+# , _kmeans_plusplus
 from sklearn.metrics.pairwise import cosine_distances
 from sklearn.preprocessing import normalize
 from sklearn.utils import check_array, check_random_state, as_float_array
