@@ -85,14 +85,14 @@ import fault_network, model_validation, stress_analysis, auto_class, utilities, 
 ###     Hypocenter input file
 # hypo_file needs the following columns (similar to hypoDD .reloc-file)
 # ID, LAT, LON, DEPTH, X, Y, Z, EX, EY, EZ, YR, MO, DY, HR, MI, SC, MAG, NCCP, NCCS, NCTP, NCTS, RCC, RCT, CID
-# hypo_file = '/Users/sandro/projects/hypo_fault_imaging/Example_files/StLeonard/hypoDD_StLeonard.txt'        # File location
-# hypo_file = '/Users/sandro/projects/hypo_fault_imaging/Error_sensitivity/SynHypo_generation/SyntheticFaults_100m_NEW_withuncertainty_175_1750_10%noise.csv'        # File location
-# hypo_file = '/Users/sandro/projects/hypo_fault_imaging/Error_sensitivity/StLeonard_generation/hypoDD_StLeonard_175_1750.csv'        # File location
-hypo_file = '/Users/sandro/projects/hypo_fault_imaging/Error_sensitivity/Anzere_generation/hypoDD_Anzere_200_2000.csv'        # File location
+# hypo_file = './data_examples/StLeonard/hypoDD_StLeonard.txt'        # File location
+# hypo_file = './Error_sensitivity/SynHypo_generation/SyntheticFaults_100m_NEW_withuncertainty_175_1750_10%noise.csv'        # File location
+# hypo_file = './Error_sensitivity/StLeonard_generation/hypoDD_StLeonard_175_1750.csv'        # File location
+hypo_file = './Error_sensitivity/Anzere_generation/hypoDD_Anzere_200_2000.csv'        # File location
 hypo_sep = '\t'                                                                                                                     # Separator
 
 ###     Output directory
-out_dir = '/Users/sandro/projects/hypo_fault_imaging/'
+out_dir = os.getcwd()
 
 ###     "Fault network reconstruction" module settings
 n_mc = 100                     # Nr of Monte Carlo (MC) simulations
@@ -142,11 +142,11 @@ fric_coeff = 0.75
 # ###     Hypocenter input file
 # # hypo_file needs the following columns (similar to hypoDD .reloc-file)
 # # ID, LAT, LON, DEPTH, X, Y, Z, EX, EY, EZ, YR, MO, DY, HR, MI, SC, MAG, NCCP, NCCS, NCTP, NCTS, RCC, RCT, CID
-# hypo_file = '/Users/sandro/projects/hypo_fault_imaging/Example_files/StLeonard/hypoDD_StLeonard.txt'        # File location
+# hypo_file = './data_examples/StLeonard/hypoDD_StLeonard.txt'        # File location
 # hypo_sep = '\t'                                                                                                                     # Separator
 
 # ###     Output directory
-# out_dir = '/Users/sandro/projects/hypo_fault_imaging'
+# out_dir = os.getcwd()
 
 # ###     "Fault network reconstruction" module settings
 # n_mc = 1000                     # Nr of Monte Carlo (MC) simulations
@@ -159,7 +159,7 @@ fric_coeff = 0.75
 # # Yr, Mo, Dy, Hr:Mi, Lat, Lon, Z, Mag, A, Strike1, Dip1, Rake1, Strike2, Dip2,
 # # Rake2, Pazim, Pdip, Tazim, Tdip, Q, Type, Loc
 # validation_bool = True
-# foc_file = '/Users/sandro/projects/hypo_fault_imaging/Example_files/StLeonard/FocalMechanisms_StLeonard.txt'
+# foc_file = './data_examples/StLeonard/FocalMechanisms_StLeonard.txt'
 # foc_sep = ';'
 # foc_mag_check = True
 # foc_loc_check = True
