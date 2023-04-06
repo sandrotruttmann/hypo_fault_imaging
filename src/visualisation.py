@@ -487,7 +487,7 @@ def model_3d(input_params, data_input, data_output):
     # Define the figure layout parameters
     fig.update_layout(
         template='plotly_white',
-        title='Hypocenter-based imgaging of active faults (Truttmann et al. 2023)',
+        title='Hypocenter-based imaging of active faults (Truttmann et al. 2023)',
         hovermode=None,
         showlegend=True,
         legend={'itemclick': 'toggle'},
