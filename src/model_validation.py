@@ -42,13 +42,13 @@ def match_hypoDD_focals(data_input, foc_file, foc_sep, foc_mag_check, foc_loc_ch
     
     # Import the focal file
     focal_import = pd.read_csv(foc_file, sep=foc_sep)
+    
     # Delete the last columns of the focals
     focal_import = focal_import.iloc[:, 0:22]
 
     # Extract the date and time information of the events with focals
     # Split the 'Hr:Mi' column in two
-    Hr = focal_import['Hr:Mi'].str.split(pat=':', expand=True)[0]
-    Mi = focal_import['Hr:Mi'].str.split(pat=':', expand=True)[1]
+    Hr, Mi = focal_import['Hr:Mi'].str.split(':', expand=True).astype(int).values.T
     df_date = pd.DataFrame({'year': focal_import['Yr'],
                             'month': focal_import['Mo'],
                             'day': focal_import['Dy'],
@@ -62,46 +62,25 @@ def match_hypoDD_focals(data_input, foc_file, foc_sep, foc_mag_check, foc_loc_ch
                                 tolerance=pd.Timedelta('60s'))
 
     # Optional: magnitude cross-check
-    if foc_mag_check == True:
+    if foc_mag_check:
         # Check if magnitudes of merged data fits
-        # Create list to store all indexes with missfitting magnitudes
-        mag_missfit = 0.2
-        error_idx = []
-        for i in range(len(df)):
-            if abs(df['MAG'][i] - df['Mag'][i]) > mag_missfit:
-                error_idx.append(i)
-            else:
-                pass
-
+        # Calculate magnitude difference
+        mag_diff = np.abs(df['MAG'] - df['Mag'].values)
+        # Find indexes with missfitting magnitudes
+        error_idx = np.where(mag_diff > 0.2)[0]
         # Delete the focal data for the respective missfited hypocenter datasets
-        for i in error_idx:
-            df.iloc[i, len(data_input.iloc[0, :]):] = np.nan
-    else:
-        pass
+        df.iloc[error_idx, len(data_input.iloc[0, :]):] = np.nan
 
     # Optional: Location cross-check
-    if foc_loc_check == True:
+    if foc_loc_check:
         # Check if lat & lon & depth are fitting
-        for i in range(len(df)):
-            if abs(df['LAT'][i] - df['Lat'][i]) > 0.01:
-                print('Please check: Missfit in Lat for event with ID ',
-                      df.loc[i, 'ID'])
-            else:
-                pass
-        for i in range(len(df)):
-            if abs(df['LON'][i] - df['Lon'][i]) > 0.01:
-                print('Please check: Missfit in Lon for event with ID',
-                      df.loc[i, 'ID'])
-            else:
-                pass
-        for i in range(len(df)):
-            if abs(df['DEPTH'][i] - df['Z_y'][i]) > 1:
-                print('Please check: Missfit in Depth for event with ID',
-                      df.loc[i, 'ID'])
-            else:
-                pass
-    else:
-        pass
+        for i, row in df.iterrows():
+            if abs(row['LAT'] - row['Lat']) > 0.01:
+                print(f"Please check: Missfit in Lat for event with ID {row['ID']}")
+            if abs(row['LON'] - row['Lon']) > 0.01:
+                print(f"Please check: Missfit in Lon for event with ID {row['ID']}")
+            if abs(row['DEPTH'] - row['Z_y']) > 1:
+                print(f"Please check: Missfit in Depth for event with ID {row['ID']}")
 
     return(df)
 
@@ -125,7 +104,7 @@ def focal_validation(input_params, data_input, data_output, foc_mag_check, foc_l
 
     """
     
-    if input_params['validation_bool'][0] == True:
+    if input_params['validation_bool'][0]:
         
         print('')
         print('Fault network validation...')
@@ -133,7 +112,6 @@ def focal_validation(input_params, data_input, data_output, foc_mag_check, foc_l
         # Unpack input parameters
         foc_file = input_params['foc_file'][0]
         foc_sep = input_params['foc_sep'][0]
-        
         it = len(data_input)    
         
         # Import data and match hypocenter relocations with the focal mechanisms
@@ -146,21 +124,15 @@ def focal_validation(input_params, data_input, data_output, foc_mag_check, foc_l
             rake1 = data_input.loc[k, 'Rake1']
             auxiliary_plane = aux_plane(strike1, dip1, rake1)
             
-            if np.isnan(auxiliary_plane[0]) == True:
-                data_input.loc[k, 'Strike2'] = np.nan
-                data_input.loc[k, 'Dip2'] = np.nan
-                data_input.loc[k, 'Rake2'] = np.nan
-
+            if np.isnan(auxiliary_plane[0]):
+                data_input.loc[k, ['Strike2', 'Dip2', 'Rake2']] = np.nan
             else:
-                data_input.loc[k, 'Strike2'] = int(auxiliary_plane[0])
-                data_input.loc[k, 'Dip2'] = int(auxiliary_plane[1])
-                data_input.loc[k, 'Rake2'] = int(auxiliary_plane[2])
+                data_input.loc[k, ['Strike2', 'Dip2', 'Rake2']] = [int(auxiliary_plane[0]), int(auxiliary_plane[1]), int(auxiliary_plane[2])]
 
 
         ###########################################################################
         # Angular Difference Calculation
     
-
         # Calculate the angular difference between the fault plane orientations
         # from faultnetwork3D and the focal mechanisms
         for i in range(it):
@@ -188,15 +160,9 @@ def focal_validation(input_params, data_input, data_output, foc_mag_check, foc_l
                 # mean focal planes
                 angle1 = utilities.angle_between(nor_fau, nor_foc1)
                 angle2 = utilities.angle_between(nor_fau, nor_foc2)
-                if angle1 < 90:
-                    angle1 = angle1
-                elif angle1 > 90:
-                    angle1 = 180 - angle1
-                if angle2 < 90:
-                    angle2 = angle2
-                elif angle2 > 90:
-                    angle2 = 180 - angle2
-    
+                angle1 = angle1 if angle1 < 90 else 180 - angle1
+                angle2 = angle2 if angle2 < 90 else 180 - angle2    
+                
         ###########################################################################
         # Preferred Focal Plane Selection
                 # Choose the mean focal plane with the minimal angular difference
@@ -205,9 +171,7 @@ def focal_validation(input_params, data_input, data_output, foc_mag_check, foc_l
                 # to the mean fault plane
                 angle12 = [angle1, angle2]
                 data_output.loc[i, 'epsilon'] = min(angle12)
-                if pd.isnull(data_input['Strike1'][i]):
-                    pass
-                else:
+                if not pd.isnull(data_input['Strike1'][i]):
                     data_output.loc[i, 'pref_foc'] = angle12.index(min(angle12))+ 1
     
         ###########################################################################

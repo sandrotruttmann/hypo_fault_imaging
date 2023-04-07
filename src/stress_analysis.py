@@ -89,10 +89,10 @@ def stress_on_plane(S1_mag, S2_mag, S3_mag,
     S3_vec = np.asarray(mplstereonet.stereonet2xyz(lon, lat))[:, 0]
 
     # Invert z-axis (to make both coordinate systems right-handed)
-    S1_vec[2] = S1_vec[2] * -1
-    S2_vec[2] = S2_vec[2] * -1
-    S3_vec[2] = S3_vec[2] * -1
-
+    S1_vec[2] *= -1
+    S2_vec[2] *= -1
+    S3_vec[2] *= -1
+    
     # Construct the transformation matrix A to convert from principal
     # stress coordinates to geographical coordinate system
     A = np.array([[S1_vec[1], S1_vec[0], S1_vec[2]],

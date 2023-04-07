@@ -16,6 +16,7 @@ import numpy as np
 import matplotlib
 import utilities
 
+
 def circleplane(p, r, nor):
     """
     Function that calculates the points of a circular plane from the normal
@@ -43,31 +44,17 @@ def circleplane(p, r, nor):
     v2 = np.cross(nor, v1)                           # cross product with nor
 
     # Create list of angles in radians
-    angles = list(range(0, 360, 30))
-    angles = np.radians(angles)
-
+    angles = np.radians(np.arange(0, 361, 30))
+        
     # Calculate the outline points using the parametric equation for a circle
     # in 3D
-    X = []
-    Y = []
-    Z = []
-    for i in range(len(angles)):
-        x = p[0] + r * np.cos(angles[i]) * v1[0] + r * np.sin(angles[i]) * v2[0]
-        y = p[1] + r * np.cos(angles[i]) * v1[1] + r * np.sin(angles[i]) * v2[1]
-        z = p[2] + r * np.cos(angles[i]) * v1[2] + r * np.sin(angles[i]) * v2[2]
-        X.append(x)
-        Y.append(y)
-        Z.append(z)
+    points = p + r * (np.cos(angles)[:, None] * v1 + np.sin(angles)[:, None] * v2)
 
-    # Append the first point a second time to ensure that the circle is closed
-    X.append(p[0] + r * np.cos(angles[0]) * v1[0] + r *
-             np.sin(angles[0]) * v2[0])
-    Y.append(p[1] + r * np.cos(angles[0]) * v1[1] + r *
-             np.sin(angles[0]) * v2[1])
-    Z.append(p[2] + r * np.cos(angles[0]) * v1[2] + r *
-             np.sin(angles[0]) * v2[2])
+    # Append the first point once to ensure that the circle is closed
+    points = np.vstack([points, points[0]])
 
-    return(X, Y, Z)
+    return points[:, 0], points[:, 1], points[:, 2]
+
 
 def equal_axes(X, Y, Z):
     """
@@ -77,23 +64,15 @@ def equal_axes(X, Y, Z):
     DataFrame which can then be used in the plot settings (e.g. axis range).
     """
     # Define the maximal range of values
-    max_range = np.array([max(X)-min(X),
-                          max(Y)-min(Y),
-                          max(Z)-min(Z)]
-                         ).max() / 2.0
-
+    max_range = np.ptp([X, Y, Z]) / 2.0
+    
     # Define the mid-points for each direction
     mid_x = (max(X)+min(X)) * 0.5
     mid_y = (max(Y)+min(Y)) * 0.5
     mid_z = (max(Z)+min(Z)) * 0.5
 
-    # Define the range values for each direction
-    x_range = [mid_x - max_range, mid_x + max_range]
-    y_range = [mid_y - max_range, mid_y + max_range]
-    z_range = [mid_z - max_range, mid_z + max_range]
-
     # Output: ranges for X, Y and Z direction to be used in plot settings
-    return(x_range, y_range, z_range)
+    return tuple([[mid - max_range, mid + max_range] for mid in [mid_x, mid_y, mid_z]])
 
 
 def slipvector_3D(p, r, nor, rake):
@@ -109,13 +88,16 @@ def slipvector_3D(p, r, nor, rake):
     # Calculate a second in-plane vector (down-dip)
     vec_down = np.cross(nor, vec_strike)
     
+    # Precompute sine and cosine of the rake angle
+    cos_rake = np.cos(np.radians(-rake))
+    sin_rake = np.sin(np.radians(-rake))
+    
     # Rotate the vector in-plane according to the rake and get the xyz
     # coordinates
-    rake = np.radians(-rake)
-    u = p[0] + r * np.cos(rake) * vec_strike[0] + r * np.sin(rake) * vec_down[0]
-    v = p[1] + r * np.cos(rake) * vec_strike[1] + r * np.sin(rake) * vec_down[1]
-    w = p[2] + r * np.cos(rake) * vec_strike[2] + r * np.sin(rake) * vec_down[2]
-
+    u = p[0] + r * (cos_rake * vec_strike[0] + sin_rake * vec_down[0])
+    v = p[1] + r * (cos_rake * vec_strike[1] + sin_rake * vec_down[1])
+    w = p[2] + r * (cos_rake * vec_strike[2] + sin_rake * vec_down[2])
+    
     return(u, v, w)
 
 
@@ -146,21 +128,13 @@ def colorscale(column, cmap, minval, maxval, colorsteps, cmap_reverse=False):
         cmap = matplotlib.cm.get_cmap(cmap)
     elif cmap_reverse == True:
         cmap = matplotlib.cm.get_cmap(cmap).reversed()
-    cmap_list = []
-    for i in np.linspace(0, 1, colorsteps + 1):
-        cmap_list.append(cmap(i))
+    cmap_list = [cmap(i) for i in np.linspace(0, 1, colorsteps + 1)]
     color_ticks = np.linspace(minval, maxval, len(cmap_list))
-    colors = []
-    for i in range(len(column)):
-        if column[i] == np.nan:
-            colors.append(np.nan)
-        else:
-            array = np.asarray(color_ticks)
-            value = column[i]
-            idx = (np.abs(array - value)).argmin()
-            color = cmap_list[idx]
-            color = 'rgba' + str(color)
-            colors.append(color)
+    column = np.where(np.isnan(column), -999, column)
+    indices = np.digitize(column, color_ticks) - 1
+    colors = [f'rgba{cmap_list[idx]}' if idx >= 0 and idx < len(cmap_list) else np.nan for idx in indices]
+    colors = [np.nan if c == -999 else c for c in colors]
+    
     return colors
 
 
@@ -191,9 +165,7 @@ def colorscale_mplstereonet(column, cmap, minval, maxval, colorsteps, cmap_rever
         cmap = matplotlib.cm.get_cmap(cmap)
     elif cmap_reverse == True:
         cmap = matplotlib.cm.get_cmap(cmap).reversed()
-    cmap_list = []
-    for i in np.linspace(0, 1, colorsteps + 1):
-        cmap_list.append(cmap(i))
+    cmap_list = [cmap(i) for i in np.linspace(0, 1, colorsteps + 1)]
     color_ticks = np.linspace(minval, maxval, len(cmap_list))
     colors = []
     for i in range(len(column)):
@@ -205,6 +177,7 @@ def colorscale_mplstereonet(column, cmap, minval, maxval, colorsteps, cmap_rever
             idx = (np.abs(array - value)).argmin()
             color = cmap_list[idx]
             colors.append(color)
+    
     return colors
 
 

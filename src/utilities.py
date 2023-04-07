@@ -121,6 +121,33 @@ def store_inputparams(hypo_file, hypo_sep, out_dir, n_mc, r_nn, dt_nn, validatio
     input_params['autoclass_bool'] = autoclass_bool
     input_params['mag_type'] = mag_type
     
+    # # TODO: change to dictionary!
+    # def store_inputparams(**kwargs):
+    # input_params = {
+    #     'hypo_file': kwargs.get('hypo_file'),
+    #     'hypo_sep': kwargs.get('hypo_sep'),
+    #     'out_dir': kwargs.get('out_dir'),
+    #     'n_mc': kwargs.get('n_mc'),
+    #     'r_nn': kwargs.get('r_nn'),
+    #     'dt_nn': kwargs.get('dt_nn'),
+    #     'validation_bool': kwargs.get('validation_bool'),
+    #     'foc_file': kwargs.get('foc_file'),
+    #     'foc_sep': kwargs.get('foc_sep'),
+    #     'stress_bool': kwargs.get('stress_bool'),
+    #     'S1_mag': kwargs.get('S1_mag'),
+    #     'S2_mag': kwargs.get('S2_mag'),
+    #     'S3_mag': kwargs.get('S3_mag'),
+    #     'PP': kwargs.get('PP'),
+    #     'S1_trend': kwargs.get('S1_trend'),
+    #     'S1_plunge': kwargs.get('S1_plunge'),
+    #     'S3_trend': kwargs.get('S3_trend'),
+    #     'S3_plunge': kwargs.get('S3_plunge'),
+    #     'stress_R': kwargs.get('stress_R'),
+    #     'reduced_stress_tens_bool': kwargs.get('reduced_stress_tens_bool'),
+    #     'fric_coeff': kwargs.get('fric_coeff'),
+    #     'autoclass_bool': kwargs.get('autoclass_bool'),
+    #     'mag_type': kwargs.get('mag_type')
+    
     return input_params
 
 
@@ -140,9 +167,10 @@ def trendplunge_to_vector(trend, plunge):
     XYZ coordinates.
 
     """
-    # Calculate the normal unit vector components
+    # Convert to radians
     trend = np.radians(trend)
     plunge = np.radians(plunge)
+    # Calculate the normal unit vector components
     nor_x = np.sin(0.5 * np.pi - plunge) * np.sin(trend)
     nor_y = np.sin(0.5 * np.pi - plunge) * np.cos(trend)
     nor_z = - np.cos(0.5 * np.pi - plunge)
@@ -169,23 +197,23 @@ def rake_to_trendplunge(plane_strike, plane_dip, rake):
     Trend and plunge.
 
     """
-    # NOT WORKING FOR NEGATIVE RAKES YET!
 
     # Convert degrees to radians
-    S = np.radians(plane_strike)
-    D = np.radians(plane_dip)
-    R = np.radians(rake)
+    S = np.deg2rad(plane_strike)
+    D = np.deg2rad(plane_dip)
+    R = np.deg2rad(rake)
+    
     # Calculate beta in dependence of rake
-    if R > (np.pi / 2):
-        beta = np.pi - abs(np.arctan(np.tan(R) * np.cos(D)))
-    else:
-        beta = abs(np.arctan(np.tan(R) * np.cos(D)))
+    beta = abs(np.arctan(np.tan(R) * np.cos(D)))
+    beta = np.pi - beta if R > (np.pi / 2) else beta
+    
     # Calculate lineation trend and plunge
     trend = S + beta
     plunge = np.arcsin(np.sin(D) * np.sin(R))
+    
     # Convert to degrees and round
-    trend = int(round(np.degrees(trend), 0)) % 360
-    plunge = int(round(np.degrees(plunge), 0))
+    trend = int(round(np.degrees(trend))) % 360
+    plunge = int(round(np.degrees(plunge)))
 
     return(trend, plunge)
 
@@ -300,13 +328,10 @@ def save_data(input_params, data_input, data_output, per_X, per_Y, per_Z):
     
     # Create output folder
     out_path = os.path.join(input_params['out_dir'][0], 'Model_output')
-    if not os.path.exists(out_path):
-        os.makedirs(out_path)
-    else:
-        pass
+    os.makedirs(out_path, exist_ok=True)
         
     # Save the input parameters to a .txt-file
-    input_params.to_csv(out_path + '/input_params.txt', sep='\t', index=None)
+    input_params.to_csv(out_path + '/input_params.txt', sep='\t', index=False)
 
     # Save the input data to a .txt-file
     data_input.to_csv(out_path + '/data_input.txt', sep='\t')

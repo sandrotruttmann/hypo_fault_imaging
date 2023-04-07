@@ -25,7 +25,6 @@ import matplotlib.pyplot as plt
 import os
 
 
-
 def model_3d(input_params, data_input, data_output):
     """
     Generate an interactive 3D model with plotly.
@@ -105,8 +104,7 @@ def model_3d(input_params, data_input, data_output):
     # Plot error ellipsoids
     # Workaround to only show one legend entry for fault planes: create an array
     # with only the first value True with the length of the number of events
-    idx = df['EX'].dropna()
-    idx = idx.index[0]
+    idx = df['EX'].dropna().index[0]
     legend_show = [False for i in range(len(df))]
     legend_show[idx] = True
 
@@ -144,15 +142,14 @@ def model_3d(input_params, data_input, data_output):
         colormap = 'RdYlGn_r'
         column = np.array(df['epsilon'])
         minval = 0
-        maxval = column[~np.isnan(column)].max()
+        maxval = np.nanmax(column)
         maxval = math.ceil(maxval * 10) / 10.0
         colorsteps = 40
         colors = utilities_plot.colorscale(column, colormap, minval, maxval, colorsteps)
         
         # Workaround to only show one legend entry for fault planes: create an array
         # with only the first value True with the length of the number of events
-        idx = df['Strike1'].dropna()
-        idx = idx.index[0]
+        idx = df['Strike1'].dropna().index[0]
         legend_show = [False for i in range(len(df))]
         legend_show[idx] = True
     
@@ -268,9 +265,6 @@ def model_3d(input_params, data_input, data_output):
                     )
                 fig.add_traces([focals_pref, focals_nonpref])
 
-    else:
-        pass
-
     ############################################################################
     # Plot the fault planes    
     if 'class' in df.columns:
@@ -285,7 +279,7 @@ def model_3d(input_params, data_input, data_output):
 
     column = df['kappa']
     minval = 0
-    # maxval = max(df['kappa'])/2
+    # maxval = np.nanmax(column)/2
     maxval = 100000
     opac = utilities_plot.opacity(column, minval, maxval, 1000)
 
@@ -354,7 +348,7 @@ def model_3d(input_params, data_input, data_output):
         colormap = 'plasma'
         column = np.array(df['I'])
         minval = 0
-        # maxval = column[~np.isnan(column)].max()
+        # maxval = np.nanmax(column)
         maxval = 1
         colorsteps = 50
         colors = utilities_plot.colorscale(column, colormap, minval, maxval, colorsteps)
@@ -480,9 +474,7 @@ def model_3d(input_params, data_input, data_output):
                                             df['_Z'])
 
     # Cameraview standard (Top view)
-    eye = dict(x=0,
-                y=-0.1,
-                z=2)    
+    eye = dict(x=0, y=-0.1, z=2)    
     
     # Define the figure layout parameters
     fig.update_layout(
@@ -535,10 +527,7 @@ def model_3d(input_params, data_input, data_output):
     
     # Save output
     out_path = os.path.join(input_params['out_dir'][0], 'Model_output')
-    if not os.path.exists(out_path):
-        os.makedirs(out_path)
-    else:
-        pass
+    os.makedirs(out_path, exist_ok=True)
 
     fig.write_html(out_path + '/3D_model.html')
 
@@ -549,8 +538,8 @@ def faults_stereoplot(input_params, data_output):
     if 'class' in data_output.columns:
         column = data_output['class'].to_numpy()
         cmap = 'gnuplot'
-        minval = np.nanmin(data_output['class']) - 0.1
-        maxval = np.nanmax(data_output['class']) + 0.1
+        minval = np.nanmin(column) - 0.1
+        maxval = np.nanmax(column) + 0.1
         colorsteps = 50
         colors = utilities_plot.colorscale_mplstereonet(column, cmap, minval, maxval, colorsteps, cmap_reverse=False)
 
@@ -559,7 +548,7 @@ def faults_stereoplot(input_params, data_output):
 
     column = data_output['kappa'].to_numpy()
     minval = 0
-    maxval = max(data_output['kappa'])
+    maxval = np.nanmax(column)
     opacity = utilities_plot.opacity(column, minval, maxval, 20)
         
     fig, ax = mplstereonet.subplots()
@@ -573,18 +562,17 @@ def faults_stereoplot(input_params, data_output):
                 alpha=opacity[i])
 
     ax.set_azimuth_ticks(angles=[0, 180], labels=['North', 'South'])
-    fig.set_figheight(6.8)
+    fig.set_figheight(6)
     fig.set_figwidth(6)
     
     # Save figure
     out_path = os.path.join(input_params['out_dir'][0], 'Model_output')
-    if not os.path.exists(out_path):
-        os.makedirs(out_path)
-    else:
-        pass
+    os.makedirs(out_path, exist_ok=True)
 
     fig.savefig(out_path + '/Stereoplot.pdf')
     plt.close(fig)
+    
+    return
     
 
 def nmc_histogram(input_params, data_input, per_X, per_Y, per_Z):
@@ -609,25 +597,22 @@ def nmc_histogram(input_params, data_input, per_X, per_Y, per_Z):
     mm = 1/25.4
     # Create output path (if not existing yet)
     out_path = os.path.join(input_params['out_dir'][0], 'Model_output')
-    if not os.path.exists(out_path):
-        os.makedirs(out_path)
-    else:
-        pass
-
+    os.makedirs(out_path, exist_ok=True)
     newpath = out_path + '/ErrorDistributions'
-    if not os.path.exists(newpath):
-        os.makedirs(newpath)
-    else:
-        pass
+    os.makedirs(newpath, exist_ok=True)
     
-    for i in range(len(data_input)):
-        plt.rcParams.update({'font.size': 8})
+    # Precompute values outside the loop
+    binwidth = 1
+    linewidth1 = 1
+    linewidth2 = 0.7
+    plt.rcParams.update({'font.size': 8})
 
+
+    for i in range(len(data_input)):
         fig, axs = plt.subplots(nrows=1, ncols=3,
                                 figsize=(190*mm, 70*mm,), sharey=True,
                                 tight_layout=True)
 
-        binwidth = 1
         axs[0].hist(per_X.loc[i, 1:], density=True,
                     bins=np.arange(min(per_X.loc[i, 1:]),
                                max(per_X.loc[i, 1:]) + binwidth, binwidth),
@@ -641,8 +626,6 @@ def nmc_histogram(input_params, data_input, per_X, per_Y, per_Z):
                                max(per_Z.loc[i, 1:]) + binwidth, binwidth),
                     color='grey')
         
-        linewidth1 = 1
-        linewidth2 = 0.7
         y_axis_max = axs[0].get_ylim()[1]
         axs[0].vlines(data_input.loc[i, '_X'], 0, y_axis_max, color='black', linewidth=linewidth1)
         axs[1].vlines(data_input.loc[i, '_Y'], 0, y_axis_max, color='black', linewidth=linewidth1)
@@ -677,5 +660,7 @@ def nmc_histogram(input_params, data_input, per_X, per_Y, per_Z):
                 
         fig.savefig(newpath + f'/ErrorDist_{ID}.pdf')
         plt.close(fig)
+        
+    return
 
 
