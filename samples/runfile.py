@@ -29,161 +29,39 @@ sys.path.insert(0, './src')
 import fault_network, model_validation, stress_analysis, auto_class, utilities, visualisation
 
 
-
-# ##############################################################################
-# ##############################################################################
 # ##########################    Input parameters     ###########################
-
-# ###     Hypocenter input file
-# # hypo_file needs the following columns (similar to hypoDD .reloc-file)
-# # ID, LAT, LON, DEPTH, X, Y, Z, EX, EY, EZ, YR, MO, DY, HR, MI, SC, MAG, NCCP, NCCS, NCTP, NCTS, RCC, RCT, CID
-# hypo_file = '/Users/sandro/Dropbox/PhD/Data/Data_SED/Lee_2023/NLL_Valais_Lee_A1-A2.txt'        # File location
-# hypo_sep = '\t'                                                                                                                     # Separator
-
-# ###     Output directory
-# out_dir = '/Users/sandro/projects/hypo_fault_imaging'
-
-# ###     "Fault network reconstruction" module settings
-# n_mc = 10                     # Nr of Monte Carlo (MC) simulations
-# r_nn = 5000                      # Search radius [m] of nearest neighbor search
-# dt_nn = 8760 * 5                  # Search time window [h]
-# mag_type = 'ML'                 # Magnitude type: 'ML' or 'Mw'
-
-# ###     "Model Validation" module settings
-# # foc_file needs following columns:
-# # Yr, Mo, Dy, Hr:Mi, Lat, Lon, Z, Mag, A, Strike1, Dip1, Rake1, Strike2, Dip2,
-# # Rake2, Pazim, Pdip, Tazim, Tdip, Q, Type, Loc
-# validation_bool = False
-# foc_file = '/Users/sandro/projects/hypo_fault_imaging/Example_files/StLeonard/FocalMechanisms_StLeonard.txt'
-# foc_sep = ';'
-# foc_mag_check = True
-# foc_loc_check = True
-
-# ###     "Automatic Classification" module settings
-# autoclass_bool = False
-# n_clusters = 2
-# algorithm = 'vmf_soft'
-# rotation = True
-
-# ###     "Fault Stress Analysis" module settings
-# stress_bool = False
-# S1_trend = 301
-# S1_plunge = 23
-# S3_trend = 43
-# S3_plunge = 26
-# stress_R = 0.35
-# # Define stress magnitudes after Vavrycuk et al. (2014)
-# S1_mag = 1
-# S2_mag = 1 - (2*stress_R)
-# S3_mag = -1
-# PP = 0
-# fric_coeff = 0.75
-
-
-####################################################
-#### TEMPORARY FOR SENSITIVITY ANALYSIS
-###     Hypocenter input file
-# hypo_file needs the following columns (similar to hypoDD .reloc-file)
-# ID, LAT, LON, DEPTH, X, Y, Z, EX, EY, EZ, YR, MO, DY, HR, MI, SC, MAG, NCCP, NCCS, NCTP, NCTS, RCC, RCT, CID
-# hypo_file = './data_examples/StLeonard/hypoDD_StLeonard.txt'        # File location
-# hypo_file = './Error_sensitivity/SynHypo_generation/SyntheticFaults_100m_NEW_withuncertainty_175_1750_10%noise.csv'        # File location
-# hypo_file = './Error_sensitivity/StLeonard_generation/hypoDD_StLeonard_175_1750.csv'        # File location
-hypo_file = './Error_sensitivity/Anzere_generation/hypoDD_Anzere_200_2000.csv'        # File location
-hypo_sep = '\t'                                                                                                                     # Separator
-
-###     Output directory
-out_dir = os.getcwd()
-
-###     "Fault network reconstruction" module settings
-n_mc = 100                     # Nr of Monte Carlo (MC) simulations
-r_nn = 600                      # Search radius [m] of nearest neighbor search
-dt_nn = 12                   # Search time window [h]
-mag_type = 'ML'                 # Magnitude type: 'ML' or 'Mw'
-
-###     "Model Validation" module settings
-# foc_file needs following columns:
-# Yr, Mo, Dy, Hr:Mi, Lat, Lon, Z, Mag, A, Strike1, Dip1, Rake1, Strike2, Dip2,
-# Rake2, Pazim, Pdip, Tazim, Tdip, Q, Type, Loc
-validation_bool = False
-foc_file = '/Users/sandro/projects/hypo_fault_imaging/Example_files/StLeonard/FocalMechanisms_StLeonard.txt'
-foc_sep = ';'
-foc_mag_check = True
-foc_loc_check = True
-
-###     "Automatic Classification" module settings
-autoclass_bool = False
-n_clusters = 2
-algorithm = 'vmf_soft'
-rotation = True
-
-###     "Fault Stress Analysis" module settings
-stress_bool = False
-S1_trend = 301
-S1_plunge = 23
-S3_trend = 43
-S3_plunge = 26
-stress_R = 0.35
-# Define stress magnitudes after Vavrycuk (2014)
-S1_mag = 1
-S2_mag = 1 - (2*stress_R)
-S3_mag = -1
-PP = 0
-fric_coeff = 0.75
-
-####################################################
-
-
-
-
-# ##############################################################################
-# ##############################################################################
-# ##########################    Input parameters     ###########################
-
-# ###     Hypocenter input file
-# # hypo_file needs the following columns (similar to hypoDD .reloc-file)
-# # ID, LAT, LON, DEPTH, X, Y, Z, EX, EY, EZ, YR, MO, DY, HR, MI, SC, MAG, NCCP, NCCS, NCTP, NCTS, RCC, RCT, CID
-# hypo_file = './data_examples/StLeonard/hypoDD_StLeonard.txt'        # File location
-# hypo_sep = '\t'                                                                                                                     # Separator
-
-# ###     Output directory
-# out_dir = os.getcwd()
-
-# ###     "Fault network reconstruction" module settings
-# n_mc = 1000                     # Nr of Monte Carlo (MC) simulations
-# r_nn = 100                      # Search radius [m] of nearest neighbor search
-# dt_nn = 26298                   # Search time window [h]
-# mag_type = 'ML'                 # Magnitude type: 'ML' or 'Mw'
-
-# ###     "Model Validation" module settings
-# # foc_file needs following columns:
-# # Yr, Mo, Dy, Hr:Mi, Lat, Lon, Z, Mag, A, Strike1, Dip1, Rake1, Strike2, Dip2,
-# # Rake2, Pazim, Pdip, Tazim, Tdip, Q, Type, Loc
-# validation_bool = True
-# foc_file = './data_examples/StLeonard/FocalMechanisms_StLeonard.txt'
-# foc_sep = ';'
-# foc_mag_check = True
-# foc_loc_check = True
-
-# ###     "Automatic Classification" module settings
-# autoclass_bool = True
-# n_clusters = 2
-# algorithm = 'vmf_soft'
-# rotation = True
-
-# ###     "Fault Stress Analysis" module settings
-# stress_bool = True
-# S1_trend = 301
-# S1_plunge = 23
-# S3_trend = 43
-# S3_plunge = 26
-# stress_R = 0.35
-# # Define stress magnitudes after Vavrycuk et al. (2014)
-# S1_mag = 1
-# S2_mag = 1 - (2*stress_R)
-# S3_mag = -1
-# PP = 0
-# fric_coeff = 0.75
-
+input_params = {
+    ###     Hypocenter input file
+    'hypo_file' : './data_examples/StLeonard/hypoDD_StLeonard.txt',        # File location
+    'hypo_sep' : '\t',                                                 # Separator
+    ###     Output directory
+    'out_dir' : os.getcwd(),
+    ###     "Fault network reconstruction" module settings
+    'n_mc' : 1000,                      # number of Monte Carlo simulations
+    'r_nn' : 100,                       # search radius [m] of nearest neighbor search
+    'dt_nn' : 26298,                    # search time window [h]
+    'mag_type' : 'ML',                  # magnitude type: 'ML' or 'Mw'
+    ###     "Model Validation" module settings
+    'validation_bool' : True,
+    'foc_file' : './data_examples/StLeonard/FocalMechanisms_StLeonard.txt',
+    'foc_sep' : ';',
+    'foc_mag_check' : True,             # check focal magnitude (recommended)
+    'foc_loc_check' : True,             # check focal location (recommended)
+    ###     "Automatic Classification" module settings
+    'autoclass_bool' : True,
+    'n_clusters' : 2,                   # number of expected classes
+    'algorithm' : 'vmf_soft',           # clustering algorithm
+    'rotation' : True,                  # rotate poles before analysis (recommended for vertical faults)
+    ###     "Fault Stress Analysis" module settings
+    'stress_bool' : True,
+    'S1_trend' : 301,                   # σ1 trend
+    'S1_plunge' : 23,                   # σ1 plunge
+    'S3_trend' : 43,                    # σ3 trend
+    'S3_plunge' : 26,                   # σ3 plunge
+    'stress_R' : 0.35,                  # Stress shape ratio
+    'PP' : 0,                           # Pore pressure
+    'fric_coeff' : 0.75                 # Friction coefficient
+}
 
 ###############################################################################
 # Start the timer
@@ -195,33 +73,19 @@ print('')
 
 ###############################################################################
 # Fault network reconstruction
-(input_params,
- data_input, data_output,
- per_X, per_Y, per_Z) = fault_network.faultnetwork3D(hypo_file, hypo_sep, out_dir,
-                                              n_mc, r_nn, dt_nn,
-                                              validation_bool,  foc_file,
-                                              foc_sep,
-                                              stress_bool, S1_mag, S2_mag,
-                                              S3_mag, PP, S1_trend, S1_plunge,
-                                              S3_trend, S3_plunge, stress_R,
-                                              fric_coeff,
-                                              autoclass_bool, mag_type)
+(data_input, data_output,
+ per_X, per_Y, per_Z) = fault_network.faultnetwork3D(input_params)
  
 ###############################################################################
 # Model Validation
 data_input, data_output = model_validation.focal_validation(input_params,
                                                             data_input,
-                                                            data_output,
-                                                            foc_mag_check,
-                                                            foc_loc_check)
+                                                            data_output)
 
 ###############################################################################
 # Automatic Classification
 data_output = auto_class.auto_classification(input_params,
-                                             data_output,
-                                             n_clusters,
-                                             algorithm=algorithm,
-                                             rotation=rotation)
+                                             data_output)
 
 ###############################################################################
 # Fault Stress Analysis

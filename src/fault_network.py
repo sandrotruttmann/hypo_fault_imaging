@@ -450,10 +450,7 @@ def faultplanes3D(ID, date, X, Y, Z, EX, EY, EZ, r_nn, dt_nn):
     return(plane_fit)
 
 
-def faultnetwork3D(hypo_file, hypo_sep, out_dir, n_mc, r_nn, dt_nn, validation_bool, 
-                      foc_file, foc_sep, stress_bool, S1_mag, S2_mag, S3_mag, PP,
-                      S1_trend, S1_plunge, S3_trend, S3_plunge, stress_R,
-                      fric_coeff, autoclass_bool, mag_type):
+def faultnetwork3D(input_params):
     """
     Calculate 3D fault network from hypocenters.
 
@@ -513,18 +510,9 @@ def faultnetwork3D(hypo_file, hypo_sep, out_dir, n_mc, r_nn, dt_nn, validation_b
     print('')
     print('Fault network reconstruction...')
     
-    # Create a dataframe with the input parameters
-    input_params = utilities.store_inputparams(hypo_file, hypo_sep, out_dir, n_mc, r_nn, dt_nn, validation_bool, 
-                          foc_file, foc_sep, stress_bool, S1_mag, S2_mag, S3_mag, PP,
-                          S1_trend, S1_plunge, S3_trend, S3_plunge, stress_R,
-                          fric_coeff, autoclass_bool, mag_type)
-
-    # Unpack input parameters
-    hypo_file = input_params['hypo_file'][0]
-    hypo_sep = input_params['hypo_sep'][0]
-    n_mc = input_params['n_mc'][0]
-    r_nn = input_params['r_nn'][0]
-    dt_nn = input_params['dt_nn'][0]
+    # Unpack input parameters from dictionary
+    for key, value in input_params.items():
+        globals()[key] = value
     
     # Data import
     data_input = pd.read_csv(hypo_file, sep=hypo_sep)
@@ -738,4 +726,4 @@ def faultnetwork3D(hypo_file, hypo_sep, out_dir, n_mc, r_nn, dt_nn, validation_b
 
     ###########################################################################
 
-    return(input_params, data_input, data_output, df_per_X, df_per_Y, df_per_Z)
+    return(data_input, data_output, df_per_X, df_per_Y, df_per_Z)

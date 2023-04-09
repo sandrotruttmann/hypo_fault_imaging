@@ -85,7 +85,7 @@ def match_hypoDD_focals(data_input, foc_file, foc_sep, foc_mag_check, foc_loc_ch
     return(df)
 
 
-def focal_validation(input_params, data_input, data_output, foc_mag_check, foc_loc_check):
+def focal_validation(input_params, data_input, data_output):
     """
     Validate the fault network model with the focal mechanism data.
 
@@ -104,14 +104,16 @@ def focal_validation(input_params, data_input, data_output, foc_mag_check, foc_l
 
     """
     
-    if input_params['validation_bool'][0]:
+    # Unpack input parameters from dictionary
+    for key, value in input_params.items():
+        globals()[key] = value
+
+    if validation_bool:
         
         print('')
         print('Fault network validation...')
         
         # Unpack input parameters
-        foc_file = input_params['foc_file'][0]
-        foc_sep = input_params['foc_sep'][0]
         it = len(data_input)    
         
         # Import data and match hypocenter relocations with the focal mechanisms

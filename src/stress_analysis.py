@@ -176,21 +176,21 @@ def fault_stress(input_params, data_output):
         Plunge of intermediate principal stress.
 
     """
-    if input_params['stress_bool'][0] == True:
+    
+    # Unpack input parameters from dictionary
+    for key, value in input_params.items():
+        globals()[key] = value
+
+    if input_params['stress_bool'] == True:
         print('')
         print('Fault stress calculation...')
-    
-        # Unpack input parameters
-        S1_mag = input_params['S1_mag'][0]
-        S2_mag = input_params['S2_mag'][0]
-        S3_mag = input_params['S3_mag'][0]
-        S1_trend = input_params['S1_trend'][0]
-        S1_plunge = input_params['S1_plunge'][0]
-        S3_trend = input_params['S3_trend'][0]
-        S3_plunge = input_params['S3_plunge'][0]
-        PP = input_params['PP'][0]
-        fric_coeff = input_params['fric_coeff'][0]
         
+        # Define relative stress magnitudes after Vavrycuk et al. (2014)
+        S1_mag = 1
+        S2_mag = 1 - (2*stress_R)
+        S3_mag = -1
+
+            
         # Calculate the stresses on each fault plane
         strike_arr = np.array((data_output['mean_azi'] - 90) % 360)
         dip_arr = np.array(data_output['mean_dip'])

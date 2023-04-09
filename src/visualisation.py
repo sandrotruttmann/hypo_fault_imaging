@@ -46,6 +46,10 @@ def model_3d(input_params, data_input, data_output):
     print('')
     print('Creating visual output...')
     
+    # Unpack input parameters from dictionary
+    for key, value in input_params.items():
+        globals()[key] = value
+
     df = pd.merge(data_input, data_output, on='ID')
 
     fig = go.Figure()
@@ -526,7 +530,7 @@ def model_3d(input_params, data_input, data_output):
     fig.update_xaxes(title_standoff=20)
     
     # Save output
-    out_path = os.path.join(input_params['out_dir'][0], 'Model_output')
+    out_path = os.path.join(input_params['out_dir'], 'Model_output')
     os.makedirs(out_path, exist_ok=True)
 
     fig.write_html(out_path + '/3D_model.html')
@@ -535,6 +539,10 @@ def model_3d(input_params, data_input, data_output):
 
 
 def faults_stereoplot(input_params, data_output):
+    # Unpack input parameters from dictionary
+    for key, value in input_params.items():
+        globals()[key] = value
+
     if 'class' in data_output.columns:
         column = data_output['class'].to_numpy()
         cmap = 'gnuplot'
@@ -566,7 +574,7 @@ def faults_stereoplot(input_params, data_output):
     fig.set_figwidth(6)
     
     # Save figure
-    out_path = os.path.join(input_params['out_dir'][0], 'Model_output')
+    out_path = os.path.join(input_params['out_dir'], 'Model_output')
     os.makedirs(out_path, exist_ok=True)
 
     fig.savefig(out_path + '/Stereoplot.pdf')
@@ -596,7 +604,7 @@ def nmc_histogram(input_params, data_input, per_X, per_Y, per_Z):
  
     mm = 1/25.4
     # Create output path (if not existing yet)
-    out_path = os.path.join(input_params['out_dir'][0], 'Model_output')
+    out_path = os.path.join(input_params['out_dir'], 'Model_output')
     os.makedirs(out_path, exist_ok=True)
     newpath = out_path + '/ErrorDistributions'
     os.makedirs(newpath, exist_ok=True)

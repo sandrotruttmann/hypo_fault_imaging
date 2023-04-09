@@ -17,139 +17,7 @@ import numpy as np
 import numba
 import pandas as pd
 import os
-
-
-def store_inputparams(hypo_file, hypo_sep, out_dir, n_mc, r_nn, dt_nn, validation_bool, 
-                      foc_file, foc_sep, stress_bool, S1_mag, S2_mag, S3_mag, PP,
-                      S1_trend, S1_plunge, S3_trend, S3_plunge, stress_R,
-                      fric_coeff, autoclass_bool, mag_type):
-    """
-
-    Parameters
-    ----------
-    
-    hypo_file : str
-        Path of hypoDD input file.
-    hypo_sep : str
-        Separator for hypoDD input file.
-    out_dir : str
-        Path for output folder.
-    n_mc : int
-        Number of MC simulations.
-    r_nn : int
-        Search radius for nearest neighbor search [m].
-    dt_nn : int
-        Search time for nearest neighbor search [h].
-    validation_bool : bool
-        If True: perform model validation calculations.
-    foc_file : str
-        Path for focal mechanism catalog.
-    foc_sep : str
-        Separator for focal mechanism catalog.
-    stress_bool : bool
-        If True: perform fault stress analysis.
-    S1_mag : int
-        Maximum principal stress magnitude [MPa].
-    S2_mag : int
-        Intermediate principal stress magnitude [MPa].
-    S3_mag : int
-        Minimum principal stress magnitude [MPa].
-    PP : int
-        Pore fluid pressure [MPa].
-    S1_trend : int
-        Trend of maximum principal stress direction.
-    S1_plunge : int
-        Plunge of maximum principal stress direction.
-    S3_trend : int
-        Trend of minimum principal stress direction.
-    S3_plunge : int
-        Plunge of minimum principal stress direction.
-    stress_R : float
-        Stress shape ratio R.
-    fric_coeff : float
-        Friction coefficient.
-    autoclass_bool : bool
-        If True: perform autoclassification.
-    mag_type : str    
-        Type of magnitude (ML, Mw)
-    
-
-    Returns
-    -------
-    input_params : DataFrame
-        Input parameters.
-
-    """
-    input_params = pd.DataFrame(np.nan, index=[0], columns=['hypo_file',
-                                                      'hypo_sep',
-                                                      'out_dir',
-                                                      'n_mc',
-                                                      'r_nn',
-                                                      'dt_nn',
-                                                      'validation_bool',
-                                                      'foc_file',
-                                                      'foc_sep',
-                                                      'stress_bool',
-                                                      'S1_trend', 'S1_plunge',
-                                                      'S3_trend', 'S3_plunge',
-                                                      'stress_R', 'reduced_stress_tens_bool',
-                                                      'fric_coeff',
-                                                      'autoclass_bool',
-                                                      'mag_type'
-                                                      ])
-    
-    input_params['hypo_file'] = hypo_file
-    input_params['hypo_sep'] = hypo_sep
-    input_params['out_dir'] = out_dir
-    input_params['n_mc'] = n_mc
-    input_params['r_nn'] = r_nn
-    input_params['dt_nn'] = dt_nn
-    input_params['validation_bool'] = validation_bool
-    input_params['foc_file'] = foc_file
-    input_params['foc_sep'] = foc_sep
-    input_params['stress_bool'] = stress_bool
-    input_params['S1_mag'] = S1_mag
-    input_params['S2_mag'] = S2_mag
-    input_params['S3_mag'] = S3_mag
-    input_params['PP'] = PP
-    input_params['S1_trend'] = S1_trend
-    input_params['S1_plunge'] = S1_plunge
-    input_params['S3_trend'] = S3_trend
-    input_params['S3_plunge'] = S3_plunge
-    input_params['stress_R'] = stress_R
-    input_params['fric_coeff'] = fric_coeff
-    input_params['autoclass_bool'] = autoclass_bool
-    input_params['mag_type'] = mag_type
-    
-    # # TODO: change to dictionary!
-    # def store_inputparams(**kwargs):
-    # input_params = {
-    #     'hypo_file': kwargs.get('hypo_file'),
-    #     'hypo_sep': kwargs.get('hypo_sep'),
-    #     'out_dir': kwargs.get('out_dir'),
-    #     'n_mc': kwargs.get('n_mc'),
-    #     'r_nn': kwargs.get('r_nn'),
-    #     'dt_nn': kwargs.get('dt_nn'),
-    #     'validation_bool': kwargs.get('validation_bool'),
-    #     'foc_file': kwargs.get('foc_file'),
-    #     'foc_sep': kwargs.get('foc_sep'),
-    #     'stress_bool': kwargs.get('stress_bool'),
-    #     'S1_mag': kwargs.get('S1_mag'),
-    #     'S2_mag': kwargs.get('S2_mag'),
-    #     'S3_mag': kwargs.get('S3_mag'),
-    #     'PP': kwargs.get('PP'),
-    #     'S1_trend': kwargs.get('S1_trend'),
-    #     'S1_plunge': kwargs.get('S1_plunge'),
-    #     'S3_trend': kwargs.get('S3_trend'),
-    #     'S3_plunge': kwargs.get('S3_plunge'),
-    #     'stress_R': kwargs.get('stress_R'),
-    #     'reduced_stress_tens_bool': kwargs.get('reduced_stress_tens_bool'),
-    #     'fric_coeff': kwargs.get('fric_coeff'),
-    #     'autoclass_bool': kwargs.get('autoclass_bool'),
-    #     'mag_type': kwargs.get('mag_type')
-    
-    return input_params
-
+import json
 
 def trendplunge_to_vector(trend, plunge):
     """
@@ -326,13 +194,18 @@ def save_data(input_params, data_input, data_output, per_X, per_Y, per_Z):
 
     """
     
+    # Unpack input parameters from dictionary
+    for key, value in input_params.items():
+        globals()[key] = value
+
     # Create output folder
-    out_path = os.path.join(input_params['out_dir'][0], 'Model_output')
+    out_path = os.path.join(input_params['out_dir'], 'Model_output')
     os.makedirs(out_path, exist_ok=True)
         
     # Save the input parameters to a .txt-file
-    input_params.to_csv(out_path + '/input_params.txt', sep='\t', index=False)
-
+    with open(str(out_path + '/input_params.txt'), 'w') as outfile:
+        json.dump(input_params, outfile)
+        
     # Save the input data to a .txt-file
     data_input.to_csv(out_path + '/data_input.txt', sep='\t')
 

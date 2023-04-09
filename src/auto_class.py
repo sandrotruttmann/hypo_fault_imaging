@@ -19,8 +19,7 @@ import utilities
 import spherecluster
 
 
-def auto_classification(input_params, data_output, n_clusters,
-                        algorithm='skm', rotation=True):
+def auto_classification(input_params, data_output):
     """
     Automatic classification of point cloud based on fault orientations.
 
@@ -43,7 +42,11 @@ def auto_classification(input_params, data_output, n_clusters,
 
     """
 
-    if input_params['autoclass_bool'][0]:
+    # Unpack input parameters from dictionary
+    for key, value in input_params.items():
+        globals()[key] = value
+
+    if input_params['autoclass_bool']:
         print('')
         print('Automatic classification...')
     
