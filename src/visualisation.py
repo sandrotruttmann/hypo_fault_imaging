@@ -274,7 +274,7 @@ def model_3d(input_params, data_input, data_output):
     if 'class' in df.columns:
         column = data_output['class']
         cmap = 'gnuplot'
-        minval = np.nanmin(data_output['class']) - 0.1
+        minval = np.nanmin(data_output['class']) - 1.1
         maxval = np.nanmax(data_output['class']) + 0.1
         colorsteps = 100
         colors = utilities_plot.colorscale(column, cmap, minval, maxval, colorsteps, cmap_reverse=False)

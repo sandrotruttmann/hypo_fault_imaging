@@ -64,7 +64,8 @@ def auto_classification(input_params, data_output):
         if rotation:
             # Rotate the data to similar directions if necessary
             # Ensure that all vectors point to similar direction as first entry
-            v1 = np.array([X[0], Y[0], Z[0]]) / np.linalg.norm([X[0], Y[0], Z[0]])
+            v1 = [data[0][0], data[0][1], data[0][2]]
+            v1 = v1 / np.linalg.norm(v1)
             # Check every point in the dataset and swap direction if it
             # lies on the other side of the stereoplot
             # (angular difference larger than 90 degrees)

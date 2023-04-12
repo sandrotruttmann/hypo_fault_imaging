@@ -21,12 +21,12 @@ from mycolorpy import colorlist as mcp
 import os
 import sys
 sys.path.insert(0, './src')
-import fault_network, model_validation, stress_analysis
+import fault_network, model_validation
 
 # Specify the different r_nn and dt_nn parameters to be assessed
 # (example: St. Leonard)
 r_nn_list = [50, 100, 200, 400, 600, 800]
-dt_nn_list = [24, 48, 168, 8766, 26298, 999999]
+dt_nn_list = [48, 168, 8766, 26298, 999999]
 
 
 # ##########################    Input parameters     ###########################
@@ -38,8 +38,8 @@ input_params = {
     'out_dir' : os.getcwd(),
     ###     "Fault network reconstruction" module settings
     'n_mc' : 1000,                      # number of Monte Carlo simulations
-    'r_nn' : 100,                       # search radius [m] of nearest neighbor search
-    'dt_nn' : 26298,                    # search time window [h]
+    'r_nn' : 0,                       # search radius [m] of nearest neighbor search
+    'dt_nn' : 0,                    # search time window [h]
     'mag_type' : 'ML',                  # magnitude type: 'ML' or 'Mw'
     ###     "Model Validation" module settings
     'validation_bool' : True,
@@ -47,20 +47,6 @@ input_params = {
     'foc_sep' : ';',
     'foc_mag_check' : True,             # check focal magnitude (recommended)
     'foc_loc_check' : True,             # check focal location (recommended)
-    ###     "Automatic Classification" module settings
-    'autoclass_bool' : True,
-    'n_clusters' : 2,                   # number of expected classes
-    'algorithm' : 'vmf_soft',           # clustering algorithm
-    'rotation' : True,                  # rotate poles before analysis (recommended for vertical faults)
-    ###     "Fault Stress Analysis" module settings
-    'stress_bool' : True,
-    'S1_trend' : 301,                   # σ1 trend
-    'S1_plunge' : 23,                   # σ1 plunge
-    'S3_trend' : 43,                    # σ3 trend
-    'S3_plunge' : 26,                   # σ3 plunge
-    'stress_R' : 0.35,                  # Stress shape ratio
-    'PP' : 0,                           # Pore pressure
-    'fric_coeff' : 0.75                 # Friction coefficient
 }
 
 # Combine the needed modules of the file "runfile.py" in a function
@@ -81,8 +67,11 @@ def runfile_function(r_nn, dt_nn):
     return data_input, data_output, input_params
 
 # Loop over the different combinations of r_nn and dt_nn and plot the cumulative distributions thereof
+mm = 1/25.4
 fig, axs = plt.subplots(nrows=1, ncols=1,
-                        figsize=(10, 10))
+                        figsize=(115*mm, 115*mm))
+plt.rcParams.update({'font.size': 10})
+
 color_count = 0
 cmap = mcp.gen_color(cmap='viridis', n=len(r_nn_list)*len(dt_nn_list))
 for r_nn in r_nn_list:
@@ -92,8 +81,8 @@ for r_nn in r_nn_list:
         print("Start Time: ", now_time)
         input_params['r_nn'] = r_nn
         input_params['dt_nn'] = dt_nn
-        print('r_nn: ', r_nn)
-        print('dt_nn', dt_nn)
+        print('r_nn: ', input_params['r_nn'])
+        print('dt_nn', input_params['dt_nn'])
         data_input, data_output, input_params = runfile_function(r_nn, dt_nn)
         
         # Plot data
@@ -107,6 +96,8 @@ for r_nn in r_nn_list:
             
 axs.set_xlabel('Angular difference')
 axs.set_ylabel('Cumulative frequency')
-axs.legend()
+axs.set_xlim([0, 70])
+axs.legend(prop={'size': 6})
+fig.tight_layout()
 
 plt.savefig(input_params['out_dir'] + '/InputParams_Sensitivity.pdf')
