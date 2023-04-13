@@ -1,3 +1,9 @@
+
+
+[![DOI](https://zenodo.org/badge/582537470.svg)](https://zenodo.org/badge/latestdoi/582537470)
+
+
+
 # Hypocenter-based 3D Imaging of Active Faults
 
 The code in this repository allows to image active faults in 3D based on relatively relocated hypocenter datasets after the method presented by Truttmann et al. (2023).
