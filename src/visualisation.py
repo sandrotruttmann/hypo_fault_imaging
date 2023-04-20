@@ -117,9 +117,9 @@ def model_3d(input_params, data_input, data_output):
         phi = np.linspace(0, 2 * np.pi, 10)
         theta = np.linspace(-np.pi / 2, np.pi / 2, 10)
         phi, theta = np.meshgrid(phi, theta)
-        x = np.cos(theta) * np.sin(phi) * df['EX'][i]
-        y = np.cos(theta) * np.cos(phi) * df['EY'][i]
-        z = np.sin(theta) * df['EZ'][i]
+        x = np.cos(theta) * np.sin(phi) * df['EX'][i] * 3
+        y = np.cos(theta) * np.cos(phi) * df['EY'][i] * 3
+        z = np.sin(theta) * df['EZ'][i] * 3
     
         # Shift error ellipse to the right xyz coordinates
         x = x + df['_X'][i]
@@ -134,8 +134,8 @@ def model_3d(input_params, data_input, data_output):
                           alphahull=0,
                           hoverinfo='none',
                           showlegend=legend_show[i],
-                          name='Error ellipsoids',
-                          legendgroup='Error ellipsoids',
+                          name='Error ellipsoids (3σ)',
+                          legendgroup='Error ellipsoids (3σ)',
                           visible='legendonly')
         fig.add_trace(trace)
     

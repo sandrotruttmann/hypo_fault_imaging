@@ -43,6 +43,7 @@ The file "runfile.py" in the "samples" folder provides an example of how to run 
 Please note:
 - The input parameters have to be defined in a dictionary with pre-defined keys (see runfile.py for a template).
 - The hypocenter input file follows the hypoDD standard (.reloc file) in terms of header namings. The file specified with "hypo_file" thus needs the following columns and exact names: ID, LAT, LON, DEPTH, X, Y, Z, EX, EY, EZ, YR, MO, DY, HR, MI, SC, MAG, NCCP, NCCS, NCTP, NCTS, RCC, RCT, CID
+    - Relocation errors should be given as one standard deviation (σ)
 - The focal mechanisms input file needs to be structured according to the following header naming convention: Yr, Mo, Dy, Hr:Mi, Lat, Lon, Z, Mag, A, Strike1, Dip1, Rake1, Strike2, Dip2, Rake2, Pazim, Pdip, Tazim, Tdip, Q, Type, Loc
 
 Since the choice of the input parameters r_nn and dt_nn is critical, an example for the sensitivity analysis of these parameters is provided in the file "inputparams_sensitivity.py" (for details see Truttmann et al. (2023)).

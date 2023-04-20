@@ -66,9 +66,9 @@ def hypo_perturbation(n_mc, _X, _Y, _Z, EX, EY, EZ, ID):
     # error (then it catches 99.7 % of the data according to normal
     # distribution properties)
     for i in range(_X.shape[0]):
-        per_X[i,:] = np.random.normal(loc=_X[i], scale=EX[i] / 3, size=n_mc)
-        per_Y[i,:] = np.random.normal(loc=_Y[i], scale=EY[i] / 3, size=n_mc)
-        per_Z[i,:] = np.random.normal(loc=_Z[i], scale=EZ[i] / 3, size=n_mc)
+        per_X[i,:] = np.random.normal(loc=_X[i], scale=EX[i], size=n_mc)
+        per_Y[i,:] = np.random.normal(loc=_Y[i], scale=EY[i], size=n_mc)
+        per_Z[i,:] = np.random.normal(loc=_Z[i], scale=EZ[i], size=n_mc)
         
     return per_X, per_Y, per_Z
 
