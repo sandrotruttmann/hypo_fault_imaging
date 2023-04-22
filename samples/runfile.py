@@ -8,10 +8,10 @@ Each of the modules can be turned on and off by specifing the respective boolean
 Please cite: Truttmann et al. (2023). Hypocenter-based 3D Imaging of Active Faults: Method and Applications in the Southwestern Swiss Alps.
 
 @author: Sandro Truttmann
-@contact: sandro.truttmann@geo.unibe.ch
+@contact: sandro.truttmann@gmail.com
 @license: GPL-3.0
-@date: December 2022
-@version: 1.0
+@date: April 2023
+@version: 0.1.1
 """
 
 # Clear variables
