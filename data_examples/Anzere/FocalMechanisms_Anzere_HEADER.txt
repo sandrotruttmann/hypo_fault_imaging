@@ -1,9 +1,8 @@
-# Bern, 27/12/2022
+# Bern, 22/04/2023
 
-# Focal mechanisms catalog of the Anzère earthquake sequence of Truttmann et al. (XXXX):
-# Hypocenter-based 3D Imaging of Active Faults: Method and Applications in the Southwestern Swiss Alps
+# Focal mechanisms catalog of the Anzère earthquake sequence of Truttmann et al. (2023)
 #
-# If you use this catalog please cite: Truttmann, S., Diehl, T., Herwegh, M. (XXXX). XXXX
+# If you use this catalog please cite: Truttmann, S., Diehl, T., Herwegh, M. (2023). Hypocenter-based 3D Imaging of Active Faults: Method and Applications in the Southwestern Swiss Alps 
 
 
 ####################### Header description of relevant parameters: ######################
@@ -11,7 +10,7 @@
 # Lat, Lon				: Latitude, Longitude (decimal degrees)
 # Z					: depth (in km)
 # Mag					: Local Magnitude ML
-# A					: ?
+# A					: Active nodal plane (0: unknown)
 # Strike1, Dip1, Rake1			: Strike, Dip, Rake of nodal plane 1
 # Strike2, Dip2, Rake2			: Strike, Dip, Rake of nodal plane 2
 # Pazim, Pdip				: Azimuth, Dip of P-axis

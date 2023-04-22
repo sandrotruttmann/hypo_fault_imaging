@@ -86,13 +86,14 @@ for r_nn in r_nn_list:
         data_input, data_output, input_params = runfile_function(r_nn, dt_nn)
         
         # Plot data
-        data_focals = data_output.dropna(subset=['epsilon'])
-        x = (data_focals['epsilon']).sort_values(ascending=True)
-        y = pd.Series(range(0, len(x)))
-        axs.plot(x, y + 1,
-                 label=f'{r_nn}/{dt_nn}',
-                 color=cmap[color_count])
-        color_count = color_count + 1
+        if 'epsilon' in data_output.columns:
+            data_focals = data_output.dropna(subset=['epsilon'])
+            x = (data_focals['epsilon']).sort_values(ascending=True)
+            y = pd.Series(range(0, len(x)))
+            axs.plot(x, y + 1,
+                    label=f'{r_nn}/{dt_nn}',
+                    color=cmap[color_count])
+            color_count = color_count + 1
             
 axs.set_xlabel('Angular difference')
 axs.set_ylabel('Cumulative frequency')

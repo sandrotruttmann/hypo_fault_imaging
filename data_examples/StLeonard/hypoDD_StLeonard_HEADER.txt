@@ -1,10 +1,9 @@
 
-# Bern, 27/12/2022
+# Bern, 22/04/2023
 
-# Relocated earthquake catalog of the St. Léonard earthquake sequence of Truttmann et al. (XXXX):
-# Hypocenter-based 3D Imaging of Active Faults: Method and Applications in the Southwestern Swiss Alps
+# Relocated earthquake catalog of the St. Léonard earthquake sequence of Truttmann et al. (2023)
 #
-# If you use this catalog please cite: Truttmann, S., Diehl, T., Herwegh, M. (XXXX). XXXX
+# If you use this catalog please cite: Truttmann, S., Diehl, T., Herwegh, M. (2023). Hypocenter-based 3D Imaging of Active Faults: Method and Applications in the Southwestern Swiss Alps 
 
 
 ####################### Header description of relevant parameters: ######################
@@ -12,7 +11,7 @@
 # LAT, LON				: Latitude, Longitude (decimal degrees)
 # DEPTH					: depth (in km)
 # X, Y, Z				: Coordinates relative to cluster centroid (in m)
-# EX, EY, EZ				: Errors in x, y, and z directions (3σ) (in m)
+# EX, EY, EZ				: Errors in x, y, and z directions (1σ) (in m) - to obtain the 3σ reported in paper multiply by 3
 # YR, MO, DY				: Origin date (year, month, day)
 # HR, MI, SC				: Origin time (hour, minute, second)
 # MAG					: Magnitude (ML)
@@ -20,9 +19,6 @@
 # NCTP, NCTS				: Number of catalog P- and S-wave data
 # RCC, RCT				: Rms residual for cross-correlated catalog data
 # CID					: Cluster index
-# maxhor-m				: semi-major horizontal error ellipsoid axis
-# minhor-m				: semi-minor horizontal error ellipsoid axis
-# maxazi				: azimuth of semi-major horizontal error ellipsoid axis
 
 #########################################################################################
 #########################################################################################
