@@ -6,11 +6,12 @@
 
 # Hypocenter-based 3D Imaging of Active Faults
 
-The code in this repository allows to image active faults in 3D based on relatively relocated hypocenter datasets after the method presented by Truttmann et al. (2023).
+The code in this repository allows to image active faults in 3D based on relatively relocated hypocenter datasets after the method presented in Truttmann et al. (2023) (https://doi.org/10.1029/2023JB026352).
 
 ## Scientific publication
 If you use the code in this repository please cite the following scientific publication:
-- Truttmann, S., Diehl, T., Herwegh, M. (2023). Hypocenter-based 3D Imaging of Active Faults: Method and Applications in the Southwestern Swiss Alps. JGR, DOI xxx.
+- Truttmann, S., Diehl, T., Herwegh, M. (2023). Hypocenter-based 3D Imaging of Active Faults: Method and Applications in the Southwestern Swiss Alps. Journal of Geophysical Research: Solid Earth, https://doi.org/10.1029/2023JB026352.
+
 
 ## Installation
 To make this code work on your machine you can simply clone this repository. 
