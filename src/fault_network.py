@@ -20,6 +20,7 @@ import numba
 import multiprocessing as mp
 from itertools import zip_longest
 from sklearn.neighbors import NearestNeighbors
+from sklearn.cluster import DBSCAN
 from sphere.distribution import kent_me
 import utilities
 
@@ -52,6 +53,7 @@ def hypo_perturbation(n_mc, _X, _Y, _Z, EX, EY, EZ, ID):
     Perturbed XYZ hypocenter coordinates in LV95/CH1903+.
 
     """
+    
     # Create empty arrays for the perturbed hypocenter locations
     per_X = np.empty((_X.shape[0], n_mc))
     per_X[:] = np.nan
@@ -60,15 +62,24 @@ def hypo_perturbation(n_mc, _X, _Y, _Z, EX, EY, EZ, ID):
     per_Z = np.empty((_Z.shape[0], n_mc))
     per_Z[:] = np.nan
 
-    # Calculate all perturbed hypocenters
-    # Assumption: NORMAL distribution within the error
-    # Note: scale parameter (= sigma) is approximately 1/3 of the total
-    # error (then it catches 99.7 % of the data according to normal
-    # distribution properties)
-    for i in range(_X.shape[0]):
-        per_X[i,:] = np.random.normal(loc=_X[i], scale=EX[i], size=n_mc)
-        per_Y[i,:] = np.random.normal(loc=_Y[i], scale=EY[i], size=n_mc)
-        per_Z[i,:] = np.random.normal(loc=_Z[i], scale=EZ[i], size=n_mc)
+    # If n_mc is set to 1, no perturbation is performed (MC simulation turned off)
+    if n_mc == 1:
+        for i in range(_X.shape[0]):
+            per_X[i,:] = _X[i]
+            per_Y[i,:] = _Y[i]
+            per_Z[i,:] = _Z[i]
+
+    # Else, perturbation is performed (MC simulation turned on)
+    else:
+        # Calculate all perturbed hypocenters
+        # Assumption: NORMAL distribution within the error
+        # Note: scale parameter (= sigma) is approximately 1/3 of the total
+        # error (then it catches 99.7 % of the data according to normal
+        # distribution properties)
+        for i in range(_X.shape[0]):
+            per_X[i,:] = np.random.normal(loc=_X[i], scale=EX[i], size=n_mc)
+            per_Y[i,:] = np.random.normal(loc=_Y[i], scale=EY[i], size=n_mc)
+            per_Z[i,:] = np.random.normal(loc=_Z[i], scale=EZ[i], size=n_mc)
         
     return per_X, per_Y, per_Z
 
@@ -450,6 +461,28 @@ def faultplanes3D(ID, date, X, Y, Z, EX, EY, EZ, r_nn, dt_nn):
     return(plane_fit)
 
 
+def DBSCAN_outlier_detection(data_input, data_output, max_dist, min_samples, clust_alg, leaf_size):
+    
+    # Use DBSCAN clustering to detect outliers (marked with -1 label)
+    clust = DBSCAN(eps=max_dist, min_samples=min_samples, metric='euclidean',
+                   algorithm=clust_alg, leaf_size=leaf_size, n_jobs=-1)
+    clustering = clust.fit(data_input[['X', 'Y', 'Z']])
+    
+    # Write cluster labels to data_output
+    data_output['clust_labels'] = clustering.labels_
+    print(data_output['clust_labels'])
+    
+    # Store outliers in separate dataframe
+    data_input_outliers = data_input[data_output['clust_labels'] == -1].reset_index(drop=True)
+
+    # Remove outliers from data_input and data_output
+    data_input = data_input[data_output['clust_labels'] != -1].reset_index(drop=True)
+    data_output = data_output[data_output['clust_labels'] != -1].reset_index(drop=True)
+    
+    
+    return data_input, data_output, data_input_outliers
+    
+
 def faultnetwork3D(input_params):
     """
     Calculate 3D fault network from hypocenters.
@@ -503,7 +536,7 @@ def faultnetwork3D(input_params):
 
     Returns
     -------
-    DataFrames with the parameters of the input parameters, the full 3D fault
+    DataFrames with the parameters of the input parameters (with/without detected outliers), the full 3D fault
     network model and the MC hypocenter locations.
     """
     
@@ -528,9 +561,22 @@ def faultnetwork3D(input_params):
     data_input['_Y'] = data_input['Y']
     data_input['_Z'] = -data_input['Z']
     
+    
     # Create an empty DataFrame to store the output data
     data_output = pd.DataFrame(data_input['ID'])
-
+    
+    ###########################################################################
+    # Outlier removal
+    # Apply DBSCAN clustering for outlier removal if specified
+    if DBSCAN_outliers:
+        data_input, data_output, data_input_outliers = DBSCAN_outlier_detection(data_input, data_output,
+                                                                                max_dist, min_samples, clust_alg, leaf_size)
+    else:
+        # Create empty dataframe
+        data_input_outliers = pd.DataFrame()
+            
+    ###########################################################################
+    # MC Simulation preparation
     # Create n_mc perturbed hypocenter datasets for Monte Carlo simulation
     per_X, per_Y, per_Z = hypo_perturbation(n_mc,
                                             np.array(data_input['_X']),
@@ -726,4 +772,4 @@ def faultnetwork3D(input_params):
 
     ###########################################################################
 
-    return(data_input, data_output, df_per_X, df_per_Y, df_per_Z)
+    return(data_input, data_input_outliers, data_output, df_per_X, df_per_Y, df_per_Z)

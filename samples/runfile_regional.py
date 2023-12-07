@@ -31,29 +31,36 @@ import fault_network, model_validation, stress_analysis, auto_class, utilities, 
 
 # ##########################    Input parameters     ###########################
 input_params = {
+    ###     General settings
+    'project_title' : 'Northern Valais',                               # Project title
     ###     Hypocenter input file
-    'hypo_file' : './data_examples/StLeonard/hypoDD_StLeonard.txt',        # File location
+    'hypo_file' : './data_examples/Anzere/hypoDD_Anzere.txt',        # File location
     'hypo_sep' : '\t',                                                 # Separator
     ###     Output directory
     'out_dir' : os.getcwd(),
     ###     "Fault network reconstruction" module settings
-    'n_mc' : 1000,                      # number of Monte Carlo simulations
-    'r_nn' : 100,                       # search radius [m] of nearest neighbor search
-    'dt_nn' : 26298,                    # search time window [h]
+    'n_mc' : 1,                      # number of Monte Carlo simulations; set n_mc = 1 to turn off Monte Carlo simulations 
+    'r_nn' : 600,                       # search radius [m] of nearest neighbor search
+    'dt_nn' : 12,                    # search time window [h]
     'mag_type' : 'ML',                  # magnitude type: 'ML' or 'Mw'
+    'DBSCAN_outliers' : True,           # detect outliers with DBSCAN clustering (recommended for regional datasets)
+    'max_dist' : 100,                   # DBSCAN: maximum distance [m] between two samples for one to be considered as in the neighborhood of the other
+    'min_samples' : 10,                 # DBSCAN: number of samples in a neighborhood for a point to be considered as a core point
+    'clust_alg' : 'auto',               # DBSCAN: The algorithm to be used by the NearestNeighbors module to compute pointwise distances and find nearest neighbors
+    'leaf_size' : 30,                   # DBSCAN: Leaf size passed to BallTree or cKDTree
     ###     "Model Validation" module settings
-    'validation_bool' : True,
-    'foc_file' : './data_examples/StLeonard/FocalMechanisms_StLeonard.txt',
+    'validation_bool' : False,
+    'foc_file' : './data_examples/Anzere/FocalMechanisms_Anzere.txt',
     'foc_sep' : ';',
     'foc_mag_check' : True,             # check focal magnitude (recommended)
     'foc_loc_check' : True,             # check focal location (recommended)
     ###     "Automatic Classification" module settings
-    'autoclass_bool' : True,
+    'autoclass_bool' : False,
     'n_clusters' : 2,                   # number of expected classes
     'algorithm' : 'vmf_soft',           # clustering algorithm
     'rotation' : True,                  # rotate poles before analysis (recommended for vertical faults)
     ###     "Fault Stress Analysis" module settings
-    'stress_bool' : True,
+    'stress_bool' : False,
     'S1_trend' : 301,                   # σ1 trend
     'S1_plunge' : 23,                   # σ1 plunge
     'S3_trend' : 43,                    # σ3 trend
@@ -73,7 +80,7 @@ print('')
 
 ###############################################################################
 # Fault network reconstruction
-(data_input, data_output,
+(data_input, data_input_outliers, data_output,
  per_X, per_Y, per_Z) = fault_network.faultnetwork3D(input_params)
  
 ###############################################################################
@@ -94,13 +101,14 @@ data_output, S2_trend, S2_plunge = stress_analysis.fault_stress(input_params,
 
 ###############################################################################
 # Visualisation
-visualisation.model_3d(input_params, data_input, data_output)
+visualisation.model_3d(input_params, data_input, data_input_outliers, data_output)
 visualisation.faults_stereoplot(input_params, data_output)
 # visualisation.nmc_histogram(input_params, data_input, per_X, per_Y, per_Z)
 
 ###############################################################################
 # Save model output data
-utilities.save_data(input_params, data_input, data_output, per_X, per_Y, per_Z)
+utilities.save_data(input_params, data_input, data_input_outliers, data_output,
+                    per_X, per_Y, per_Z)
 
 ###############################################################################
 # Stop the timer

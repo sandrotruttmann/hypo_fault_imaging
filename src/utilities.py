@@ -169,7 +169,7 @@ def angle_between(v1, v2):
     return angle
 
 
-def save_data(input_params, data_input, data_output, per_X, per_Y, per_Z):
+def save_data(input_params, data_input, data_input_outliers, data_output, per_X, per_Y, per_Z):
     """
     Save data in txt-files.
 
@@ -179,6 +179,8 @@ def save_data(input_params, data_input, data_output, per_X, per_Y, per_Z):
         Input parameters.
     data_input : DataFrame
         Input data.
+    data_input : DataFrame
+        Input data that was identified as outliers.
     data_output : DataFrame
         Output data.
     per_X : DataFrame
@@ -209,6 +211,12 @@ def save_data(input_params, data_input, data_output, per_X, per_Y, per_Z):
     # Save the input data to a .txt-file
     data_input.to_csv(out_path + '/data_input.txt', sep='\t')
 
+    # Save the input data outliers to a .txt-file
+    if DBSCAN_outliers:
+        data_input_outliers.to_csv(out_path + '/data_input_outliers.txt', sep='\t')
+    else:
+        pass
+    
     # Save the output data to a .txt-file
     data_output.to_csv(out_path + '/data_output.txt', sep='\t')
 

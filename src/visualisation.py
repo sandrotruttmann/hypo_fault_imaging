@@ -25,7 +25,7 @@ import matplotlib.pyplot as plt
 import os
 
 
-def model_3d(input_params, data_input, data_output):
+def model_3d(input_params, data_input, data_input_outliers, data_output):
     """
     Generate an interactive 3D model with plotly.
 
@@ -35,6 +35,8 @@ def model_3d(input_params, data_input, data_output):
         Input parameters.
     data_input : DataFrame
         Input data.
+    data_input_outliers : DataFrame
+        Input data that was identified as outliers.
     data_output : DataFrame
         Output data.
 
@@ -100,7 +102,45 @@ def model_3d(input_params, data_input, data_output):
         legendgroup='hypocenter',
         name='Relocated hypocenters',
         showlegend=True,
-        visible='legendonly',
+        # visible='legendonly',
+        visible=True,
+        )
+    fig.add_traces(trace)
+    
+    # Plot outliers
+    # Plot hypocenters
+    # data_input_outliers['Date'] = pd.to_datetime(df['Date'])
+    # min_date = data_input_outliers['Date'].min()
+    # color_date = data_input_outliers['Date'].apply(lambda x: (x - min_date).days)
+    # tick_interval = 365
+    # max_days = color_date.max()
+    # colticks = np.arange(0, (int(max_days / 1) + 1) * 1, tick_interval)
+    # coldatetimes = [min_date + datetime.timedelta(days=i)
+    #                 for i in colticks.tolist()]
+    # coltext = [i.strftime("%d-%b-%Y") for i in coldatetimes]
+    trace = go.Scatter3d(
+        x=data_input_outliers['_X'],
+        y=data_input_outliers['_Y'],
+        z=data_input_outliers['_Z'],
+        mode='markers',
+        marker=dict(
+            # color=color_date,
+            color='black',
+            opacity=0.5,
+            colorscale='Rainbow',
+            colorbar=dict(
+                title='Date',
+                tickvals=colticks,
+                ticktext=coltext,
+                xanchor='left',
+                x=0
+                ),
+            size=3,
+            showscale=True),
+        legendgroup='hypocenter_outliers',
+        name='Relocated hypocenters (outliers)',
+        showlegend=True,
+        visible=True,
         )
     fig.add_traces(trace)
 
@@ -139,6 +179,38 @@ def model_3d(input_params, data_input, data_output):
                           visible='legendonly')
         fig.add_trace(trace)
     
+    # Plot error ellipsoids of outliers
+    idx = data_input_outliers['EX'].dropna().index[0]
+    legend_show = [False for i in range(len(data_input_outliers))]
+    legend_show[idx] = True
+
+    for i in range(len(data_input_outliers)):
+        # Create error ellipse at the zero point
+        phi = np.linspace(0, 2 * np.pi, 10)
+        theta = np.linspace(-np.pi / 2, np.pi / 2, 10)
+        phi, theta = np.meshgrid(phi, theta)
+        x = np.cos(theta) * np.sin(phi) * data_input_outliers['EX'][i] * 3
+        y = np.cos(theta) * np.cos(phi) * data_input_outliers['EY'][i] * 3
+        z = np.sin(theta) * data_input_outliers['EZ'][i] * 3
+    
+        # Shift error ellipse to the right xyz coordinates
+        x = x + data_input_outliers['_X'][i]
+        y = y + data_input_outliers['_Y'][i]
+        z = z + data_input_outliers['_Z'][i]
+    
+        trace = go.Mesh3d(x=x.flatten(),
+                          y=y.flatten(),
+                          z=z.flatten(),
+                          color='grey',
+                          opacity=0.2,
+                          alphahull=0,
+                          hoverinfo='none',
+                          showlegend=legend_show[i],
+                          name='Error ellipsoids (outliers) (3σ)',
+                          legendgroup='Error ellipsoids (outliers) (3σ)',
+                          visible='legendonly')
+        fig.add_trace(trace)
+
     ############################################################################
     # Plot the focal planes
     if 'Strike1' in df.columns:
@@ -326,6 +398,7 @@ def model_3d(input_params, data_input, data_output):
             legendgroup='3D Fault Model',
             name='3D Fault Model',
             showlegend=legend_show[i],
+            visible='legendonly',
             )
         fig.add_traces(faults)
 
@@ -342,6 +415,7 @@ def model_3d(input_params, data_input, data_output):
             showscale=False),
         legendgroup='3D Fault Model',
         showlegend=False,
+        visible='legendonly',
         )
     fig.add_traces(trace)
 
@@ -483,7 +557,7 @@ def model_3d(input_params, data_input, data_output):
     # Define the figure layout parameters
     fig.update_layout(
         template='plotly_white',
-        title='Hypocenter-based imaging of active faults (Truttmann et al. 2023)',
+        title=f'Hypocenter-Based Imaging of Active Faults (Truttmann et al. 2023): {project_title}',
         hovermode=None,
         showlegend=True,
         legend={'itemclick': 'toggle'},
