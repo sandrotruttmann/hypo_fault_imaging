@@ -577,9 +577,15 @@ def model_3d(input_params, data_input, data_input_outliers, data_output):
     # Layout settings
     # Calculate the "empty white box" to ensure equal axes of the 3D plot
     # Work-around to ensure equal axes of the 3D plot
-    x_range, y_range, z_range = utilities_plot.equal_axes(df['_X'],
-                                            df['_Y'],
-                                            df['_Z'])
+    if data_input_outliers.empty:
+        x_range, y_range, z_range = utilities_plot.equal_axes(df['_X'],
+                                                df['_Y'],
+                                                df['_Z'])
+
+    else:
+        x_range, y_range, z_range = utilities_plot.equal_axes(data_input_outliers['_X'],
+                                                data_input_outliers['_Y'],
+                                                data_input_outliers['_Z'])
 
     # Cameraview standard (Top view)
     eye = dict(x=0, y=-0.1, z=2)    
