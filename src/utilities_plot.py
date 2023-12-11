@@ -64,7 +64,7 @@ def equal_axes(X, Y, Z):
     DataFrame which can then be used in the plot settings (e.g. axis range).
     """
     # Define the maximal range of values
-    max_range = np.ptp([X, Y, Z]) / 2.0
+    max_range = np.array([X.max()-X.min(), Y.max()-Y.min(), Z.max()-Z.min()]).max() / 2.0
     
     # Define the mid-points for each direction
     mid_x = (max(X)+min(X)) * 0.5
