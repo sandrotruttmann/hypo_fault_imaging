@@ -52,7 +52,7 @@ def model_3d(input_params, data_input, data_input_outliers, data_output):
     for key, value in input_params.items():
         globals()[key] = value
 
-    df = pd.merge(data_input, data_output, on='ID')
+    df = pd.merge(data_input, data_output, on='ID').reset_index(drop=True)
 
     fig = go.Figure()
 
@@ -102,22 +102,12 @@ def model_3d(input_params, data_input, data_input_outliers, data_output):
         legendgroup='hypocenter',
         name='Relocated hypocenters',
         showlegend=True,
-        # visible='legendonly',
-        visible=True,
+        visible='legendonly',
+        # visible=True,
         )
     fig.add_traces(trace)
     
     # Plot outliers
-    # Plot hypocenters
-    # data_input_outliers['Date'] = pd.to_datetime(df['Date'])
-    # min_date = data_input_outliers['Date'].min()
-    # color_date = data_input_outliers['Date'].apply(lambda x: (x - min_date).days)
-    # tick_interval = 365
-    # max_days = color_date.max()
-    # colticks = np.arange(0, (int(max_days / 1) + 1) * 1, tick_interval)
-    # coldatetimes = [min_date + datetime.timedelta(days=i)
-    #                 for i in colticks.tolist()]
-    # coltext = [i.strftime("%d-%b-%Y") for i in coldatetimes]
     trace = go.Scatter3d(
         x=data_input_outliers['_X'],
         y=data_input_outliers['_Y'],
@@ -140,9 +130,46 @@ def model_3d(input_params, data_input, data_input_outliers, data_output):
         legendgroup='hypocenter_outliers',
         name='Relocated hypocenters (outliers)',
         showlegend=True,
-        visible=True,
+        visible='legendonly',
         )
     fig.add_traces(trace)
+
+    # Plot hypocenter clusters
+    if 'clust_labels' in df.columns:
+        column = np.array(df['clust_labels'])
+        cmap = 'turbo'      # only these work: turbo, terrain
+        minval = np.nanmin(column)
+        maxval = np.nanmax(column) + 1
+        colorsteps = len(df['clust_labels'].unique())
+        colors = utilities_plot.colorscale(column, cmap, minval, maxval, colorsteps, cmap_reverse=False)
+
+        trace = go.Scatter3d(
+            x=df['_X'],
+            y=df['_Y'],
+            z=df['_Z'],
+            mode='markers',
+            marker=dict(
+                color=colors,
+                colorbar=dict(
+                    title='Cluster',
+                    tickvals=colticks,
+                    ticktext=coltext,
+                    xanchor='left',
+                    x=0
+                    ),
+                size=3,
+                showscale=True),
+            customdata=data_output,
+            hovertemplate=
+                '<b>Event ID:</b> %{customdata[0]} <br>'
+                '<b>Cluster Nr.:</b> %{customdata[3]} <br>',
+            legendgroup='hypocenter_clustered',
+            name='Relocated hypocenters (clustered)',
+            showlegend=True,
+            visible=True,
+            )
+        fig.add_traces(trace)
+
 
     ############################################################################
     # Plot error ellipsoids
@@ -344,12 +371,15 @@ def model_3d(input_params, data_input, data_input_outliers, data_output):
     ############################################################################
     # Plot the fault planes    
     if 'class' in df.columns:
-        column = data_output['class']
-        cmap = 'gnuplot'
-        minval = np.nanmin(data_output['class']) - 1.1
-        maxval = np.nanmax(data_output['class']) + 0.1
-        colorsteps = 100
-        colors = utilities_plot.colorscale(column, cmap, minval, maxval, colorsteps, cmap_reverse=False)
+        if data_output['class'].isna().all():
+            pass
+        else:
+            column = data_output['class']
+            cmap = 'gnuplot'
+            minval = np.nanmin(data_output['class']) - 1.1
+            maxval = np.nanmax(data_output['class']) + 0.1
+            colorsteps = 100
+            colors = utilities_plot.colorscale(column, cmap, minval, maxval, colorsteps, cmap_reverse=False)
     else:
         colors = ['black'] * len(df)
 
@@ -616,42 +646,94 @@ def faults_stereoplot(input_params, data_output):
     # Unpack input parameters from dictionary
     for key, value in input_params.items():
         globals()[key] = value
-
-    if 'class' in data_output.columns:
-        column = data_output['class'].to_numpy()
-        cmap = 'gnuplot'
-        minval = np.nanmin(column) - 0.1
-        maxval = np.nanmax(column) + 0.1
-        colorsteps = 50
+    
+    # remove rows with nan values in mean_azi and mean dip
+    df_output = data_output.dropna(subset=['mean_azi', 'mean_dip']).reset_index(drop=True)
+    
+    # if 'class' in df_output.columns:
+    #     column = df_output['class'].to_numpy()
+    #     cmap = 'gnuplot'
+    #     minval = np.nanmin(column) - 0.1
+    #     maxval = np.nanmax(column) + 0.1
+    #     colorsteps = 50
+    #     colors = utilities_plot.colorscale_mplstereonet(column, cmap, minval, maxval, colorsteps, cmap_reverse=False)
+    if 'clust_labels' in df_output.columns:
+        column = df_output['clust_labels'].to_numpy()
+        cmap = 'turbo'
+        minval = np.nanmin(column)
+        maxval = np.nanmax(column) + 1
+        colorsteps = len(df_output['clust_labels'].unique())
         colors = utilities_plot.colorscale_mplstereonet(column, cmap, minval, maxval, colorsteps, cmap_reverse=False)
-
+        
     else:
-        colors = ['black'] * len(data_output)
+        colors = ['black'] * len(df_output)
 
-    column = data_output['kappa'].to_numpy()
+    column = df_output['kappa'].to_numpy()
     minval = 0
     maxval = np.nanmax(column)
     opacity = utilities_plot.opacity(column, minval, maxval, 20)
         
-    fig, ax = mplstereonet.subplots()
+    mm = 1/25.4
+    fig, ax = mplstereonet.subplots(figsize=(100*mm, 100*mm))
     
-    for i in range(len(data_output)):
-        ax.pole((data_output['mean_azi'][i] - 90 % 360),
-                data_output['mean_dip'][i],
+    # Plot poles
+    strikes = df_output['mean_azi'].to_numpy() - 90 % 360
+    dips = df_output['mean_dip'].to_numpy()
+    for i in range(len(df_output)):
+        ax.pole(strikes[i], dips[i],
                 marker='o',
                 c=colors[i],
-                markersize=5,
+                markersize=2,
+                markeredgecolor='black',
+                markeredgewidth=0.1,
                 alpha=opacity[i])
+        
+        annotate = True
+        if annotate:
+            # annotate i in polar coordinates
+            idx = int(df_output['clust_labels'][i])
+            lon, lat = mplstereonet.pole(strikes[i], dips[i])
+            ax.text(lon, lat, f'{idx}', fontsize=4, color='black',
+                )
 
-    ax.set_azimuth_ticks(angles=[0, 180], labels=['North', 'South'])
-    fig.set_figheight(6)
-    fig.set_figwidth(6)
+        
+    # # annotate points with right color
+    # for i in range(len(df_output)):
+    #     ax.annotate(i, xy=(df_output['mean_azi'][i] - 90 % 360, df_output['mean_dip'][i]), color=colors[i], fontsize=5)
+    
+    # # add legend of clusters
+    # if 'clust_labels' in df_output.columns:
+    #     for i in range(len(df_output['clust_labels'].unique())):
+    #         ax.pole(0, 0, marker='o', c=colors[i], markersize=5, alpha=1, label=i)
+    #     ax.legend(loc='upper right')
+
+    # Plot density countours
+    cax = ax.density_contourf((df_output['mean_azi'] - 90 % 360),
+                        df_output['mean_dip'],
+                        cmap='Greys',
+                        alpha=0.9,
+                        measurement='poles',
+                        method='exponential_kamb',
+                        sigma=5,
+                        )
+
+    # ax.set_azimuth_ticks(angles=[0, 180], labels=['North', 'South'])
+    # fig.colorbar(cax, label='Density')
+    ax.set_azimuth_ticks([])
+    ax.grid()
+    
+    # Print nr of fault planes in lower right corner
+    ax.text(0.98, 0.02, f'n = {len(df_output)}',
+            horizontalalignment='right',
+            verticalalignment='bottom',
+            transform=ax.transAxes)
+
     
     # Save figure
     out_path = os.path.join(input_params['out_dir'], 'Model_output')
     os.makedirs(out_path, exist_ok=True)
 
-    fig.savefig(out_path + '/Stereoplot.pdf')
+    fig.savefig(out_path + '/Stereoplot.pdf', bbox_inches='tight')
     plt.close(fig)
     
     return

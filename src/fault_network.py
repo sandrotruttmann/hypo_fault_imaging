@@ -470,11 +470,11 @@ def DBSCAN_outlier_detection(data_input, data_output, max_dist, min_samples, clu
     
     # Write cluster labels to data_output
     data_output['clust_labels'] = clustering.labels_
-    print(data_output['clust_labels'])
     
     # Store outliers in separate dataframe
     data_input_outliers = data_input[data_output['clust_labels'] == -1].reset_index(drop=True)
-
+    print('Number of outliers detected: ', len(data_input_outliers))
+    
     # Remove outliers from data_input and data_output
     data_input = data_input[data_output['clust_labels'] != -1].reset_index(drop=True)
     data_output = data_output[data_output['clust_labels'] != -1].reset_index(drop=True)
@@ -693,12 +693,17 @@ def faultnetwork3D(input_params):
                 # Calculate FB5 (Kent) distribution parameters
                 vectors = np.array([nor_x, nor_y, nor_z]).T
                 vectors = vectors[~np.isnan(vectors).any(axis=1)]
-                try:
-                    G = kent_me(vectors)
-                    mean_vector = G.gamma1 / np.linalg.norm(G.gamma1)
-                    kappa = int(G.kappa)
-                    beta = int(G.beta)
-                except AssertionError:
+                if n_mc > 1:
+                    try:
+                        G = kent_me(vectors)
+                        mean_vector = G.gamma1 / np.linalg.norm(G.gamma1)
+                        kappa = int(G.kappa)
+                        beta = int(G.beta)
+                    except AssertionError:
+                        mean_vector = np.nanmean(vectors, axis=0)
+                        kappa = -999
+                        beta = -999
+                elif n_mc == 1:
                     mean_vector = np.nanmean(vectors, axis=0)
                     kappa = -999
                     beta = -999
