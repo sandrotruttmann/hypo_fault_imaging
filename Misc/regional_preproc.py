@@ -3,11 +3,13 @@
 import pandas as pd
 from pyproj import Transformer
 
-in_file = '/Users/sandro/Library/CloudStorage/Dropbox/PhD/Data/Data_SED/01_Valais/V0/01_OriginalData/hyporelocation_Valais_V0_orig.xlsx'
+in_file = '/Users/sandro/Library/CloudStorage/Dropbox/PhD/Data/Data_SED/01_Valais/V0/01_OriginalData/hyporelocation_Valais_V0_orig_Valais.xlsx'
 out_path = '/Users/sandro/Library/CloudStorage/Dropbox/PhD/Data/Data_SED/01_Valais/V0/'
 # Read in the .xlsx file
 df_orig = pd.read_excel(in_file)
 print('Number of events in original dataframe: ', len(df_orig))
+print(df_orig.head())
+print(df_orig['PreMet'].unique())
 
 #######################
 # Filtering df_orig
@@ -17,8 +19,8 @@ df_orig = df_orig[(df_orig['PreMet'] == 'LSQ') | (df_orig['PreMet'] == 'SVD')]
 # Only select data with CAT-ID 'DDR-SW0' (Valais)
 df_orig = df_orig[df_orig['CAT-ID'] == 'DDR-SW0']
 
-# Only keep tectonic events (labelled with 'T')
-df_orig = df_orig[df_orig['T'] == 'T']
+# # Only keep tectonic events (labelled with 'T')
+# df_orig = df_orig[df_orig['T'] == 'T']
 
 # Remove data prior to certain year
 df_orig = df_orig[df_orig['YYYY'] >= 1900]
@@ -50,7 +52,7 @@ df['LON'] = df_orig['Pref-lon']
 df['DEPTH'] = df_orig['Pref-dep']
 df['X'] = x     # @Tobias: which colum should we use?
 df['Y'] = y     # @Tobias: which colum should we use?
-df['Z'] = df_orig['Pref-Z']     # @Tobias: which colum should we use?
+df['Z'] = df_orig['Pref-dep'] * 1000    # @Tobias: which colum should we use?
 df['EX'] = df_orig['Err-X-m']
 df['EY'] = df_orig['Err-Y-m']
 df['EZ'] = df_orig['Err-Z-m']
