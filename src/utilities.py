@@ -219,10 +219,42 @@ def save_data(input_params, data_input, data_input_outliers, data_output, per_X,
     
     # Save the output data to a .txt-file
     data_output.to_csv(out_path + '/data_output.txt', sep='\t')
-
+    
+    # Merge data_input and data_output
+    df_merge = pd.merge(data_input, data_output, on='ID', how='left')
+    df_merge.to_csv(out_path + '/data_merge.txt', sep='\t')
+    
     # Save the perturbed hypocenters to a .txt-file
     per_X.to_csv(out_path + '/per_X.txt', sep='\t')
     per_Y.to_csv(out_path + '/per_Y.txt', sep='\t')
     per_Z.to_csv(out_path + '/per_Z.txt', sep='\t')
 
     return
+
+
+def reduced_stress_tens(fric_coeff, stress_R):
+    """
+    Normalize the slip tendency according to Lisle & Srivastava (2004).
+
+    Parameters
+    ----------
+    fric_coeff : float
+        Coeffifient of friction.
+    stress_R : float
+        Stress shape ratio R.
+
+    Returns
+    -------
+    Normalized stress magnitudes.
+
+    """
+    # Calculate stress magnitudes for normalized slip and dilation tendency if
+    # defined
+    k = 1
+    rho = np.arctan(fric_coeff)
+    S1_mag = 0.5 * k * ((1 / np.sin(rho)) + 1)
+    S2_mag = S1_mag - k * (stress_R)
+    S3_mag = S1_mag - k
+    PP = 0
+    
+    return(S1_mag, S2_mag, S3_mag, PP)
