@@ -39,9 +39,8 @@ df = pd.DataFrame(columns=['ID', 'LAT', 'LON', 'DEPTH', 'X', 'Y', 'Z', 'EX', 'EY
                            'YR', 'MO', 'DY', 'HR', 'MI', 'SC', 'MAG', 'NCCP', 'NCCS', 'NCTP',
                            'NCTS', 'RCC', 'RCT', 'CID'])
 
-# Tranform coordinates from lat/lon (WGS84) to CH1903+ (EPSG:21781) using pyproj
-# x, y = pyproj.transform(pyproj.Proj(init='epsg:4326'), pyproj.Proj(init='epsg:21781'), df_orig['Pref-lon'].values, df_orig['Pref-lat'].values)
-transformer = Transformer.from_crs("epsg:4326", "epsg:21781")
+# Tranform coordinates from lat/lon (WGS84) to CH1903+ (EPSG:2056) using pyproj
+transformer = Transformer.from_crs("epsg:4326", "epsg:2056")
 x, y = transformer.transform(df_orig['Pref-lat'].values, df_orig['Pref-lon'].values)
 
 # TODO: check with Tobias if right columns are used here!!!
