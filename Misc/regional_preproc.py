@@ -2,6 +2,7 @@
 
 import pandas as pd
 from pyproj import Transformer
+import numpy as np
 
 in_file = '/Users/sandro/Library/CloudStorage/Dropbox/PhD/Data/Data_SED/01_Valais/V0/01_OriginalData/hyporelocation_Valais_V0_orig_Valais.xlsx'
 out_path = '/Users/sandro/Library/CloudStorage/Dropbox/PhD/Data/Data_SED/01_Valais/V0/'
@@ -22,8 +23,8 @@ df_orig = df_orig[df_orig['CAT-ID'] == 'DDR-SW0']
 # # Only keep tectonic events (labelled with 'T')
 # df_orig = df_orig[df_orig['T'] == 'T']
 
-# Remove data prior to certain year
-df_orig = df_orig[df_orig['YYYY'] >= 1900]
+# # Remove data prior to certain year
+# df_orig = df_orig[df_orig['YYYY'] >= 1900]
 
 # TODO: only use data with small enough errors? REALLY NEEDED? MAYBE NOT....
 
@@ -73,3 +74,56 @@ df['CID'] = df_orig['CID']
 
 # Store data in .csv file with ; as separator
 df.to_csv(f'{out_path}hyporelocation_Valais_V0_preproc.csv', sep=';', index=False)
+
+
+
+###################################################################################
+# Pre-processing pipeline for focal mechanisms, ignoring first line of .txt file
+df_foc_orig = pd.read_excel('/Users/sandro/Library/CloudStorage/Dropbox/PhD/Data/Data_SED/01_Valais/V0/01_OriginalData/focals_Valais_V0.xlsx')
+
+# Create empty dataframe with pre-defined columns with the necessery input structure
+df_foc = pd.DataFrame(columns=['Yr', 'Mo', 'Dy', 'Hr:Mi', 'Lat', 'Lon', 'Z', 'Mag',
+                               'A', 'Strike1', 'Dip1', 'Rake1', 'Strike2', 'Dip2', 'Rake2',
+                               'Pazim', 'Pdip', 'Tazim', 'Tdip', 'Q', 'Type', 'Loc'])
+
+# Tranform coordinates from lat/lon (WGS84) to CH1903+ (EPSG:2056) using pyproj
+transformer = Transformer.from_crs("epsg:4326", "epsg:2056")
+x, y = transformer.transform(df_foc_orig['Lat'].values, df_foc_orig['Lon'].values)
+
+# TODO: check with Tobias if right columns are used here!!!
+# Fill the new dataframe with the data from the original dataframe
+# Extract year, month and day from df_foc_orig['YYYY/MM/DD']
+year = []
+month = []
+day = []
+for i in range(len(df_foc_orig['YYYY/MM/DD'])):
+    year.append(df_foc_orig['YYYY/MM/DD'][i].year)
+    month.append(df_foc_orig['YYYY/MM/DD'][i].month)
+    day.append(df_foc_orig['YYYY/MM/DD'][i].day)
+
+df_foc['Yr'] = year
+df_foc['Mo'] = month
+df_foc['Dy'] = day
+df_foc['Hr:Mi'] = df_foc_orig['HH/MI/SS.S']
+df_foc['Lat'] = df_foc_orig['Lat']
+df_foc['Lon'] = df_foc_orig['Lon']
+df_foc['Z'] = df_foc_orig['Dep']
+df_foc['Mag'] = df_foc_orig['Mag']
+df_foc['A'] = df_foc_orig['AP']
+df_foc['Strike1'] = df_foc_orig['S1']
+df_foc['Dip1'] = df_foc_orig['D1']
+df_foc['Rake1'] = df_foc_orig['R1']
+df_foc['Strike2'] = df_foc_orig['S2']
+df_foc['Dip2'] = df_foc_orig['D2']
+df_foc['Rake2'] = df_foc_orig['R2']
+df_foc['Pazim'] = df_foc_orig['Paz']
+df_foc['Pdip'] = df_foc_orig['Ppl']
+df_foc['Tazim'] = df_foc_orig['Taz']
+df_foc['Tdip'] = df_foc_orig['Tpl']
+df_foc['Q'] = df_foc_orig['FMQ']
+df_foc['Type'] = df_foc_orig['FMT']
+df_foc['Loc'] = np.nan
+
+# Store data in .csv file with ; as separator
+df_foc.to_csv(f'{out_path}focals_Valais_V0_preproc.csv', sep=';', index=False)
+

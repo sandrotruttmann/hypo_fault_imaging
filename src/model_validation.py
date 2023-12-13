@@ -48,12 +48,28 @@ def match_hypoDD_focals(data_input, foc_file, foc_sep, foc_mag_check, foc_loc_ch
 
     # Extract the date and time information of the events with focals
     # Split the 'Hr:Mi' column in two
-    Hr, Mi = focal_import['Hr:Mi'].str.split(':', expand=True).astype(int).values.T
-    df_date = pd.DataFrame({'year': focal_import['Yr'],
-                            'month': focal_import['Mo'],
-                            'day': focal_import['Dy'],
-                            'hour': Hr,
-                            'minute': Mi})
+    
+    # Chek if focal_import['Hr:Mi'] is incorporates seconds
+    if len(focal_import['Hr:Mi'][0]) > 8:
+        datestring = pd.Series(focal_import['Hr:Mi'].str.split('.', expand=True).astype(str).values.T[0])
+        Hr, Mi, Sec = datestring.str.split(':', expand=True).astype(int).values.T
+        df_date = pd.DataFrame({'year': focal_import['Yr'],
+                                'month': focal_import['Mo'],
+                                'day': focal_import['Dy'],
+                                'hour': Hr,
+                                'minute': Mi,
+                                'second': Sec})
+        focal_import['Date'] = pd.to_datetime(df_date)
+        focal_import = focal_import.sort_values(by='Date')
+    elif len(focal_import['Hr:Mi'][0]) == 5:
+        Hr, Mi = focal_import['Hr:Mi'].str.split(':', expand=True).astype(int).values.T
+        df_date = pd.DataFrame({'year': focal_import['Yr'],
+                                'month': focal_import['Mo'],
+                                'day': focal_import['Dy'],
+                                'hour': Hr,
+                                'minute': Mi})
+    else:
+        ValueError('Please check the time format of the focal file!')
     focal_import['Date'] = pd.to_datetime(df_date)
     focal_import = focal_import.sort_values(by='Date')
 
