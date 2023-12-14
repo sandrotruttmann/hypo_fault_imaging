@@ -24,26 +24,34 @@ sys.path.insert(0, './src')
 import fault_network, model_validation
 
 # Specify the different r_nn and dt_nn parameters to be assessed
-# (example: St. Leonard)
-r_nn_list = [50, 100, 200, 400, 600, 800]
-dt_nn_list = [48, 168, 8766, 26298, 999999]
+# Regional earthquake clusters
+r_nn_list = [50, 200, 400, 600, 800, 1000, 1500]
+dt_nn_list = [168, 8766, 26298, 999999]
 
 
 # ##########################    Input parameters     ###########################
+
 input_params = {
+    ###     General settings
+    'project_title' : 'Northern Valais',                               # Project title
     ###     Hypocenter input file
-    'hypo_file' : './data_examples/StLeonard/hypoDD_StLeonard.txt',        # File location
-    'hypo_sep' : '\t',                                                 # Separator
+    'hypo_file' : '/Users/sandro/Library/CloudStorage/Dropbox/PhD/Data/Data_SED/01_Valais/V0/hyporelocation_V0_Valais_preproc.csv',        # File location
+    'hypo_sep' : ';',                                                 # Separator
     ###     Output directory
     'out_dir' : os.getcwd(),
     ###     "Fault network reconstruction" module settings
-    'n_mc' : 1000,                      # number of Monte Carlo simulations
+    'n_mc' : 1,                      # number of Monte Carlo simulations; set n_mc = 1 to turn off Monte Carlo simulations 
     'r_nn' : 0,                       # search radius [m] of nearest neighbor search
     'dt_nn' : 0,                    # search time window [h]
     'mag_type' : 'ML',                  # magnitude type: 'ML' or 'Mw'
+    'DBSCAN_outliers' : True,           # detect outliers with DBSCAN clustering (recommended for regional datasets)
+    'max_dist' : 500,                  # DBSCAN: maximum distance [m] between two samples for one to be considered as in the neighborhood of the other
+    'min_samples' : 30,                 # DBSCAN: number of samples in a neighborhood for a point to be considered as a core point
+    'clust_alg' : 'auto',               # DBSCAN: The algorithm to be used by the NearestNeighbors module to compute pointwise distances and find nearest neighbors
+    'leaf_size' : 30,                   # DBSCAN: Leaf size passed to BallTree or cKDTree
     ###     "Model Validation" module settings
     'validation_bool' : True,
-    'foc_file' : './data_examples/StLeonard/FocalMechanisms_StLeonard.txt',
+    'foc_file' : '/Users/sandro/Library/CloudStorage/Dropbox/PhD/Data/Data_SED/01_Valais/V0/focals_V0_Valais_preproc.csv',
     'foc_sep' : ';',
     'foc_mag_check' : True,             # check focal magnitude (recommended)
     'foc_loc_check' : True,             # check focal location (recommended)
@@ -54,8 +62,7 @@ def runfile_function(r_nn, dt_nn):
         
     ###############################################################################
     # Fault network reconstruction
-    (data_input, data_input_outliers, data_output,
-    per_X, per_Y, per_Z) = fault_network.faultnetwork3D(input_params)
+    (data_input, data_input_outliers, data_output, per_X, per_Y, per_Z) = fault_network.faultnetwork3D(input_params)
     
     ###############################################################################
     # Model Validation

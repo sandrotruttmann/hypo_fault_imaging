@@ -4,7 +4,7 @@ import pandas as pd
 from pyproj import Transformer
 import numpy as np
 
-in_file = '/Users/sandro/Library/CloudStorage/Dropbox/PhD/Data/Data_SED/01_Valais/V0/01_OriginalData/hyporelocation_Valais_V0_orig_Valais.xlsx'
+in_file = '/Users/sandro/Library/CloudStorage/Dropbox/PhD/Data/Data_SED/01_Valais/V0/01_OriginalData/hyporelocation_V0_Valais.xlsx'
 out_path = '/Users/sandro/Library/CloudStorage/Dropbox/PhD/Data/Data_SED/01_Valais/V0/'
 # Read in the .xlsx file
 df_orig = pd.read_excel(in_file)
@@ -73,13 +73,13 @@ df['CID'] = df_orig['CID']
 
 
 # Store data in .csv file with ; as separator
-df.to_csv(f'{out_path}hyporelocation_Valais_V0_preproc.csv', sep=';', index=False)
+df.to_csv(f'{out_path}hyporelocation_V0_Valais_preproc.csv', sep=';', index=False)
 
 
 
 ###################################################################################
 # Pre-processing pipeline for focal mechanisms, ignoring first line of .txt file
-df_foc_orig = pd.read_excel('/Users/sandro/Library/CloudStorage/Dropbox/PhD/Data/Data_SED/01_Valais/V0/01_OriginalData/focals_Valais_V0.xlsx')
+df_foc_orig = pd.read_excel('/Users/sandro/Library/CloudStorage/Dropbox/PhD/Data/Data_SED/01_Valais/V0/01_OriginalData/focals_V0_Valais.xlsx')
 
 # Create empty dataframe with pre-defined columns with the necessery input structure
 df_foc = pd.DataFrame(columns=['Yr', 'Mo', 'Dy', 'Hr:Mi', 'Lat', 'Lon', 'Z', 'Mag',
@@ -125,5 +125,5 @@ df_foc['Type'] = df_foc_orig['FMT']
 df_foc['Loc'] = np.nan
 
 # Store data in .csv file with ; as separator
-df_foc.to_csv(f'{out_path}focals_Valais_V0_preproc.csv', sep=';', index=False)
+df_foc.to_csv(f'{out_path}focals_V0_Valais_preproc.csv', sep=';', index=False)
 
