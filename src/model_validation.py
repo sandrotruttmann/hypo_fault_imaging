@@ -50,7 +50,7 @@ def match_hypoDD_focals(data_input, foc_file, foc_sep, foc_mag_check, foc_loc_ch
     # Split the 'Hr:Mi' column in two
     
     # Chek if focal_import['Hr:Mi'] is incorporates seconds
-    if len(focal_import['Hr:Mi'][0]) > 8:
+    if len(focal_import['Hr:Mi'][0]) >= 8:
         datestring = pd.Series(focal_import['Hr:Mi'].str.split('.', expand=True).astype(str).values.T[0])
         Hr, Mi, Sec = datestring.str.split(':', expand=True).astype(int).values.T
         df_date = pd.DataFrame({'year': focal_import['Yr'],
