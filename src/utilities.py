@@ -253,7 +253,7 @@ def reduced_stress_tens(fric_coeff, stress_R):
     k = 1
     rho = np.arctan(fric_coeff)
     S1_mag = 0.5 * k * ((1 / np.sin(rho)) + 1)
-    S2_mag = S1_mag - k * (stress_R)
+    S2_mag = S1_mag - k * (1 - stress_R)
     S3_mag = S1_mag - k
     PP = 0
     
