@@ -118,13 +118,6 @@ def model_3d(input_params, data_input, data_input_outliers, data_output):
             color='black',
             opacity=0.5,
             colorscale='Rainbow',
-            colorbar=dict(
-                title='Date',
-                tickvals=colticks,
-                ticktext=coltext,
-                xanchor='left',
-                x=0
-                ),
             size=3,
             showscale=True),
         legendgroup='hypocenter_outliers',
@@ -419,9 +412,7 @@ def model_3d(input_params, data_input, data_input_outliers, data_output):
             z=Z,
             mode='lines',
             line=dict(
-                # !!!!!
-                color=colors[i],
-                # color='black',
+                color='black',
                 width=6),
             opacity=opac[i],
             hoverinfo='none',

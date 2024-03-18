@@ -34,23 +34,23 @@ input_params = {
     ###     General settings
     'project_title' : 'Northern Valais',                               # Project title
     ###     Hypocenter input file
-    'hypo_file' : './data_examples/Anzere/hypoDD_Anzere.txt',        # File location
-    'hypo_sep' : '\t',                                                 # Separator
+    'hypo_file' : '/Users/sandro/Library/CloudStorage/Dropbox/PhD/Data/Data_SED/01_Valais/V0/hyporelocation_V0_Valais_preproc.csv',        # File location
+    'hypo_sep' : ';',                                                 # Separator
     ###     Output directory
     'out_dir' : os.getcwd(),
     ###     "Fault network reconstruction" module settings
     'n_mc' : 1,                      # number of Monte Carlo simulations; set n_mc = 1 to turn off Monte Carlo simulations 
     'r_nn' : 600,                       # search radius [m] of nearest neighbor search
-    'dt_nn' : 12,                    # search time window [h]
+    'dt_nn' : 8766,                    # search time window [h]
     'mag_type' : 'ML',                  # magnitude type: 'ML' or 'Mw'
     'DBSCAN_outliers' : True,           # detect outliers with DBSCAN clustering (recommended for regional datasets)
-    'max_dist' : 100,                   # DBSCAN: maximum distance [m] between two samples for one to be considered as in the neighborhood of the other
-    'min_samples' : 10,                 # DBSCAN: number of samples in a neighborhood for a point to be considered as a core point
+    'max_dist' : 500,                  # DBSCAN: maximum distance [m] between two samples for one to be considered as in the neighborhood of the other
+    'min_samples' : 30,                 # DBSCAN: number of samples in a neighborhood for a point to be considered as a core point
     'clust_alg' : 'auto',               # DBSCAN: The algorithm to be used by the NearestNeighbors module to compute pointwise distances and find nearest neighbors
     'leaf_size' : 30,                   # DBSCAN: Leaf size passed to BallTree or cKDTree
     ###     "Model Validation" module settings
-    'validation_bool' : False,
-    'foc_file' : './data_examples/Anzere/FocalMechanisms_Anzere.txt',
+    'validation_bool' : True,
+    'foc_file' : '/Users/sandro/Library/CloudStorage/Dropbox/PhD/Data/Data_SED/01_Valais/V0/focals_V0_Valais_preproc.csv',
     'foc_sep' : ';',
     'foc_mag_check' : True,             # check focal magnitude (recommended)
     'foc_loc_check' : True,             # check focal location (recommended)
@@ -60,12 +60,12 @@ input_params = {
     'algorithm' : 'vmf_soft',           # clustering algorithm
     'rotation' : True,                  # rotate poles before analysis (recommended for vertical faults)
     ###     "Fault Stress Analysis" module settings
-    'stress_bool' : False,
-    'S1_trend' : 301,                   # σ1 trend
+    'stress_bool' : True,
+    'S1_trend' : 130,                   # σ1 trend
     'S1_plunge' : 23,                   # σ1 plunge
-    'S3_trend' : 43,                    # σ3 trend
-    'S3_plunge' : 26,                   # σ3 plunge
-    'stress_R' : 0.35,                  # Stress shape ratio
+    'S3_trend' : 34,                    # σ3 trend
+    'S3_plunge' : 12,                   # σ3 plunge
+    'stress_R' : 0.30,                  # Stress shape ratio
     'PP' : 0,                           # Pore pressure
     'fric_coeff' : 0.75                 # Friction coefficient
 }
@@ -83,6 +83,9 @@ print('')
 (data_input, data_input_outliers, data_output,
  per_X, per_Y, per_Z) = fault_network.faultnetwork3D(input_params)
  
+print(len(data_input))
+print(len(data_input_outliers))
+print(len(data_output))
 ###############################################################################
 # Model Validation
 data_input, data_output = model_validation.focal_validation(input_params,
