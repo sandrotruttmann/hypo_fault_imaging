@@ -108,24 +108,28 @@ def model_3d(input_params, data_input, data_input_outliers, data_output):
     fig.add_traces(trace)
     
     # Plot outliers
-    trace = go.Scatter3d(
-        x=data_input_outliers['_X'],
-        y=data_input_outliers['_Y'],
-        z=data_input_outliers['_Z'],
-        mode='markers',
-        marker=dict(
-            # color=color_date,
-            color='black',
-            opacity=0.5,
-            colorscale='Rainbow',
-            size=3,
-            showscale=True),
-        legendgroup='hypocenter_outliers',
-        name='Relocated hypocenters (outliers)',
-        showlegend=True,
-        visible='legendonly',
-        )
-    fig.add_traces(trace)
+    # Check if data_input_outliers is empty
+    if data_input_outliers.empty:
+        pass
+    else:
+        trace = go.Scatter3d(
+            x=data_input_outliers['_X'],
+            y=data_input_outliers['_Y'],
+            z=data_input_outliers['_Z'],
+            mode='markers',
+            marker=dict(
+                # color=color_date,
+                color='black',
+                opacity=0.5,
+                colorscale='Rainbow',
+                size=3,
+                showscale=True),
+            legendgroup='hypocenter_outliers',
+            name='Relocated hypocenters (outliers)',
+            showlegend=True,
+            visible='legendonly',
+            )
+        fig.add_traces(trace)
 
     # Plot hypocenter clusters
     if 'clust_labels' in df.columns:
@@ -200,36 +204,40 @@ def model_3d(input_params, data_input, data_input_outliers, data_output):
         fig.add_trace(trace)
     
     # Plot error ellipsoids of outliers
-    idx = data_input_outliers['EX'].dropna().index[0]
-    legend_show = [False for i in range(len(data_input_outliers))]
-    legend_show[idx] = True
+    # Check if data_input_outliers is empty
+    if data_input_outliers.empty:
+        pass
+    else:
+        idx = data_input_outliers['EX'].dropna().index[0]
+        legend_show = [False for i in range(len(data_input_outliers))]
+        legend_show[idx] = True
 
-    for i in range(len(data_input_outliers)):
-        # Create error ellipse at the zero point
-        phi = np.linspace(0, 2 * np.pi, 10)
-        theta = np.linspace(-np.pi / 2, np.pi / 2, 10)
-        phi, theta = np.meshgrid(phi, theta)
-        x = np.cos(theta) * np.sin(phi) * data_input_outliers['EX'][i] * 3
-        y = np.cos(theta) * np.cos(phi) * data_input_outliers['EY'][i] * 3
-        z = np.sin(theta) * data_input_outliers['EZ'][i] * 3
-    
-        # Shift error ellipse to the right xyz coordinates
-        x = x + data_input_outliers['_X'][i]
-        y = y + data_input_outliers['_Y'][i]
-        z = z + data_input_outliers['_Z'][i]
-    
-        trace = go.Mesh3d(x=x.flatten(),
-                          y=y.flatten(),
-                          z=z.flatten(),
-                          color='grey',
-                          opacity=0.2,
-                          alphahull=0,
-                          hoverinfo='none',
-                          showlegend=legend_show[i],
-                          name='Error ellipsoids (outliers) (3σ)',
-                          legendgroup='Error ellipsoids (outliers) (3σ)',
-                          visible='legendonly')
-        fig.add_trace(trace)
+        for i in range(len(data_input_outliers)):
+            # Create error ellipse at the zero point
+            phi = np.linspace(0, 2 * np.pi, 10)
+            theta = np.linspace(-np.pi / 2, np.pi / 2, 10)
+            phi, theta = np.meshgrid(phi, theta)
+            x = np.cos(theta) * np.sin(phi) * data_input_outliers['EX'][i] * 3
+            y = np.cos(theta) * np.cos(phi) * data_input_outliers['EY'][i] * 3
+            z = np.sin(theta) * data_input_outliers['EZ'][i] * 3
+        
+            # Shift error ellipse to the right xyz coordinates
+            x = x + data_input_outliers['_X'][i]
+            y = y + data_input_outliers['_Y'][i]
+            z = z + data_input_outliers['_Z'][i]
+        
+            trace = go.Mesh3d(x=x.flatten(),
+                            y=y.flatten(),
+                            z=z.flatten(),
+                            color='grey',
+                            opacity=0.2,
+                            alphahull=0,
+                            hoverinfo='none',
+                            showlegend=legend_show[i],
+                            name='Error ellipsoids (outliers) (3σ)',
+                            legendgroup='Error ellipsoids (outliers) (3σ)',
+                            visible='legendonly')
+            fig.add_trace(trace)
 
     ############################################################################
     # Plot the focal planes

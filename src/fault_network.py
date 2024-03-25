@@ -568,6 +568,12 @@ def faultnetwork3D(input_params):
     ###########################################################################
     # Outlier removal
     # Apply DBSCAN clustering for outlier removal if specified
+    # Check if DBSCAN clustering is defined
+    if 'DBSCAN_outliers' in input_params:
+        DBSCAN_outliers = input_params['DBSCAN_outliers']
+    else:
+        DBSCAN_outliers = False
+    
     if DBSCAN_outliers:
         data_input, data_output, data_input_outliers = DBSCAN_outlier_detection(data_input, data_output,
                                                                                 max_dist, min_samples, clust_alg, leaf_size)

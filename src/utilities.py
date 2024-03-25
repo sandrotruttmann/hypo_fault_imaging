@@ -212,6 +212,11 @@ def save_data(input_params, data_input, data_input_outliers, data_output, per_X,
     data_input.to_csv(out_path + '/data_input.txt', sep='\t')
 
     # Save the input data outliers to a .txt-file
+    if 'DBSCAN_outliers' in input_params:
+        DBSCAN_outliers = input_params['DBSCAN_outliers']
+    else:
+        DBSCAN_outliers = False
+
     if DBSCAN_outliers:
         data_input_outliers.to_csv(out_path + '/data_input_outliers.txt', sep='\t')
     else:

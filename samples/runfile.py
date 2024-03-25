@@ -31,6 +31,8 @@ import fault_network, model_validation, stress_analysis, auto_class, utilities, 
 
 # ##########################    Input parameters     ###########################
 input_params = {
+    ###     General settings
+    'project_title' : 'St. Leonard Sequence',                               # Project title
     ###     Hypocenter input file
     'hypo_file' : './data_examples/StLeonard/hypoDD_StLeonard.txt',        # File location
     'hypo_sep' : '\t',                                                 # Separator
@@ -73,8 +75,8 @@ print('')
 
 ###############################################################################
 # Fault network reconstruction
-(data_input, data_output,
- per_X, per_Y, per_Z) = fault_network.faultnetwork3D(input_params)
+(data_input, data_input_outliers, data_output,
+ df_per_X, df_per_Y, df_per_Z) = fault_network.faultnetwork3D(input_params)
  
 ###############################################################################
 # Model Validation
@@ -94,13 +96,12 @@ data_output, S2_trend, S2_plunge = stress_analysis.fault_stress(input_params,
 
 ###############################################################################
 # Visualisation
-visualisation.model_3d(input_params, data_input, data_output)
-visualisation.faults_stereoplot(input_params, data_output)
-# visualisation.nmc_histogram(input_params, data_input, per_X, per_Y, per_Z)
+visualisation.model_3d(input_params, data_input, data_input_outliers, data_output)
 
 ###############################################################################
 # Save model output data
-utilities.save_data(input_params, data_input, data_output, per_X, per_Y, per_Z)
+utilities.save_data(input_params, data_input, data_input_outliers, data_output,
+                    df_per_X, df_per_Y, df_per_Z)
 
 ###############################################################################
 # Stop the timer
