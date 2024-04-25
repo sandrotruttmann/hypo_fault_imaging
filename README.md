@@ -18,8 +18,11 @@ To make this code work on your machine you can simply clone this repository.
 
 ## Requirements
 The following dependencies need to be installed by the user (we recommend using conda):
+- numpy (version 1.23.5)
+- pandas
 - numba
 - obspy
+- plotly
 - scikit-learn (version 0.23.2)
 - FB8 (https://github.com/tianluyuan/sphere)
 - mplstereonet (https://github.com/joferkington/mplstereonet)
